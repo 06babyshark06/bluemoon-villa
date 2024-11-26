@@ -77,7 +77,7 @@ function SidebarLight() {
             <List className="p-0">
               <Link href="/admin/profile">
                 <ListItem className={`px-16 ${LIST_ITEM_STYLES}`}>
-                  My Profile
+                  Thông tin
                 </ListItem>
               </Link>
               {/* <Link href="/admin/settings">

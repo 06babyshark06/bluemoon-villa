@@ -130,10 +130,10 @@ function Account1() {
   return (
     <section className="px-8 py-20 container mx-auto">
       <Typography variant="h5" color="blue-gray">
-        Basic Information
+        Thông tin cơ bản
       </Typography>
       <Typography variant="small" className="text-gray-600 font-normal mt-1">
-        Update your profile information below.
+        Cập nhật thông tin cho tài khoản của bạn
       </Typography>
       <form onSubmit={handleSubmit}>
       <div className="flex flex-col mt-8">
@@ -144,7 +144,7 @@ function Account1() {
               color="blue-gray"
               className="mb-2 font-medium"
             >
-              First Name<span className="text-red-600">*</span>
+              Họ<span className="text-red-600">*</span>
             </Typography>
             <Input
               size="lg"
@@ -163,7 +163,7 @@ function Account1() {
               color="blue-gray"
               className="mb-2 font-medium"
             >
-              Last Name<span className="text-red-600">*</span>
+              Tên<span className="text-red-600">*</span>
             </Typography>
             <Input
               size="lg"
@@ -185,7 +185,7 @@ function Account1() {
               color="blue-gray"
               className="mb-2 font-medium"
             >
-              Location
+              Địa chỉ
             </Typography>
             <Input
               size="lg"
@@ -204,7 +204,7 @@ function Account1() {
               color="blue-gray"
               className="mb-2 font-medium"
             >
-              Phone Number
+              Số điện thoại
               <span className="text-red-600">*</span>
             </Typography>
             <Input
@@ -226,7 +226,7 @@ function Account1() {
               color="blue-gray"
               className="mb-2 font-medium"
             >
-              Language
+              Ngôn ngữ
             </Typography>
             <Input
               size="lg"
@@ -245,7 +245,7 @@ function Account1() {
               color="blue-gray"
               className="mb-2 font-medium"
             >
-              Skills
+              Các kĩ năng bạn có
             </Typography>
             <Input
               size="lg"
@@ -266,26 +266,26 @@ function Account1() {
           className="w-5 mt-2 md:w-max "
           type="submit"
         >
-          Save
+          Lưu
         </Button>
       </div>
       </form>
       <Card className="w-96 mt-4">
         <List>
           <ListItem onClick={() => handleOpen(1)}>
-            Change your password
+            Đổi mật khẩu
           </ListItem>
           <ListItem onClick={() => handleOpen(2)} className="text-red-600">
-            Delete your account
+            Xóa tài khoản
           </ListItem>
         </List>
       </Card>
       <Dialog open={open === 1} handler={handleOpen}>
-        <DialogHeader>Change your password here</DialogHeader>
+        <DialogHeader>Đổi mật khẩu</DialogHeader>
         <form onSubmit={handleSubmit1}>
           <DialogBody className="flex flex-col gap-4">
-            <Input type="password" label="Old Password" />
-            <Input type="password" label="New Password" />
+            <Input type="password" label="Nhập mật khẩu cũ" />
+            <Input type="password" label="Nhập mật khẩu mới" />
           </DialogBody>
           <DialogFooter>
             <Button
@@ -294,18 +294,18 @@ function Account1() {
               onClick={handleOpen}
               className="mr-1"
             >
-              <span>Cancel</span>
+              <span>Hủy</span>
             </Button>
             <Button variant="gradient" color="green" type="submit">
-              <span>Confirm</span>
+              <span>Xác nhận</span>
             </Button>
           </DialogFooter>
         </form>
       </Dialog>
       <Dialog open={open === 2} handler={handleOpen}>
-        <DialogHeader>Want to delete your account?</DialogHeader>
+        <DialogHeader>Xác nhận xóa tài khoản này</DialogHeader>
         <DialogBody>
-          You cannot get this account back. Are you sure you want to delete it?
+          Bạn không thể khôi phục lại. Vẫn tiếp tục xóa?
         </DialogBody>
         <DialogFooter>
           <Button
@@ -314,10 +314,10 @@ function Account1() {
             onClick={handleOpen}
             className="mr-1"
           >
-            <span>Cancel</span>
+            <span>Hủy</span>
           </Button>
           <Button variant="gradient" color="red" onClick={handleDelete}>
-            <span>Delete</span>
+            <span>Xóa</span>
           </Button>
         </DialogFooter>
       </Dialog>

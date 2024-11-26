@@ -14,25 +14,41 @@ import {
   Select,
   Option,
   Switch,
+  Tabs,
+  TabsHeader,
+  TabsBody,
+  Tab,
+  TabPanel,
 } from "@material-tailwind/react";
 import {
   BriefcaseIcon,
   PencilIcon,
   TrashIcon,
   CheckIcon,
+  MagnifyingGlassIcon,
 } from "@heroicons/react/24/solid";
 import { FaHandHoldingWater } from "react-icons/fa";
-import { FcDonate, FcElectricity, FcGlobe } from "react-icons/fc";
+import {
+  FcAssistant,
+  FcDonate,
+  FcElectricity,
+  FcGlobe,
+  FcOrganization,
+} from "react-icons/fc";
+import { TbParkingCircleFilled } from "react-icons/tb";
 import { HiCheck } from "react-icons/hi";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { services } from "@/app/utils/services";
 import { toast } from "react-toastify";
 import { da } from "date-fns/locale";
+import { type } from "@/app/utils/type";
 
 function BillingCard({
+  id,
   bill: { billName, type, money, consumption },
   home: { houseNumber, members },
   createdAt,
+  edit
 }) {
   return (
     <Card shadow={false} className="rounded-lg border border-gray-300 p-4">
@@ -50,6 +66,15 @@ function BillingCard({
             )}
             {type == "Tiền từ thiện" && (
               <FcDonate className="h-6 w-6 text-gray-900" />
+            )}
+            {type == "Dịch vụ chung cư" && (
+              <FcAssistant className="h-6 w-6 text-gray-900" />
+            )}
+            {type == "Quản lý chung cư" && (
+              <FcOrganization className="h-6 w-6 text-gray-900" />
+            )}
+            {type == "Gửi xe" && (
+              <TbParkingCircleFilled className="h-6 w-6 text-gray-900" />
             )}
           </div>
           <div>
@@ -74,7 +99,7 @@ function BillingCard({
           </Button>
           <Button size="sm" variant="text" className="flex items-center gap-2">
             <PencilIcon className="h-4 w-4 text-gray-600" />
-            <Typography className="!font-semibold text-xs text-gray-600 md:block hidden">
+            <Typography className="!font-semibold text-xs text-gray-600 md:block hidden" onClick={() => edit(id)}>
               Thay đổi
             </Typography>
           </Button>
@@ -148,6 +173,32 @@ function Billing3() {
   const [consumption, setConsumption] = React.useState("");
   const [error, setError] = React.useState("");
   const [payments, setPayments] = React.useState([]);
+  const [checkedService, setCheckedService] = React.useState(false);
+  const [checkedManage, setCheckedManage] = React.useState(false);
+  const [checkedParking, setCheckedParking] = React.useState(false);
+  const [typeFilter, setTypeFilter] = React.useState("");
+  const [search, setSearch] = React.useState("");
+  const [specificPayment, setSpecificPayment] = React.useState({});
+  const filteredPayments = payments.filter(({ bill: { type } }) =>
+    typeFilter ? type === typeFilter : true
+  );
+  const searchedPayments =
+    search.length > 0
+      ? filteredPayments.filter(
+          ({ home, bill }) =>
+            home.members
+              .filter((member) => member.relationship === "Chủ hộ")[0]
+              .name.toLowerCase()
+              .includes(search.toLowerCase()) ||
+            bill.billName.toLowerCase().includes(search.toLowerCase()) ||
+            new Date(bill.createdAt)
+              .toLocaleString()
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+            home.houseNumber === parseInt(search, 10) ||
+            bill.money.toString().includes(search)
+        )
+      : filteredPayments;
 
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
   const addNewPayment = async (e) => {
@@ -176,8 +227,86 @@ function Billing3() {
       toast.success("Đã thêm khoản thu mới thành công");
       setError("");
       setConsumption("");
+      setChosenService("");
       handleOpen(0);
     }
+  };
+
+  const handleAddMonthlyPayments = async (e) => {
+    e.preventDefault();
+    if (checkedService) {
+      const type = "Dịch vụ chung cư";
+      const billName = "Phí dịch vụ chung cư";
+      const money = e.target[1].value;
+      const response = await fetch("/api/payments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ billName, type, money }),
+      });
+      const data = await response.json();
+      console.log(data);
+      if (data.error) {
+        setError(data.error);
+      } else {
+        toast.success("Đã thêm khoản thu mới thành công");
+        setError("");
+        handleOpen(0);
+      }
+    }
+    if (checkedManage) {
+      const type = "Quản lý chung cư";
+      const billName = "Phí quản lý chung cư";
+      const money = e.target[3].value;
+      const response = await fetch("/api/payments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ billName, type, money }),
+      });
+      const data = await response.json();
+      console.log(data);
+      if (data.error) {
+        setError(data.error);
+      } else {
+        toast.success("Đã thêm khoản thu mới thành công");
+        setError("");
+        handleOpen(0);
+      }
+    }
+    if (checkedParking) {
+      const type = "Gửi xe";
+      const billName = "Phí gửi xe";
+      const cars = e.target[5].value;
+      const bikes = e.target[6].value;
+      const response = await fetch("/api/payments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ billName, type, cars, bikes }),
+      });
+      const data = await response.json();
+      console.log(data);
+      if (data.error) {
+        setError(data.error);
+      } else {
+        toast.success("Đã thêm khoản thu mới thành công");
+        setError("");
+        handleOpen(0);
+      }
+    }
+    handleOpen(0);
+  };
+
+  const handleEdit = async (id) => {
+    // const response = await fetch(`/api/payments/${id}`);
+    // const data = await response.json();
+    // console.log(data);
+    // setSpecificPayment(data);
+    handleOpen(3);
   };
   React.useEffect(() => {
     const fetchPayments = async () => {
@@ -230,9 +359,45 @@ function Billing3() {
             </Button>
           </div>
         </CardHeader>
+        <CardBody>
+          <Tabs value={typeFilter}>
+            <TabsHeader className="items-center">
+              {type.map(({ label, value }) => (
+                <Tab
+                  key={value}
+                  value={value}
+                  className="capitalize z-0"
+                  onClick={() => {
+                    setTypeFilter(value);
+                  }}
+                >
+                  {label}
+                </Tab>
+              ))}
+            </TabsHeader>
+            {/* <TabsBody>
+              {data.map(({ value, desc }) => (
+                <TabPanel key={value} value={value}>
+                  {desc}
+                </TabPanel>
+              ))}
+            </TabsBody> */}
+          </Tabs>
+          <div className="lg:w-96 mt-4">
+            <Input
+              label="Tìm kiếm"
+              icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+              className=""
+              value={search}
+            />
+          </div>
+        </CardBody>
         <CardBody className="flex flex-col gap-4 !p-4">
-          {payments.map((props, key) => (
-            <BillingCard key={key} {...props} />
+          {searchedPayments.map((props, key) => (
+            <BillingCard key={key} edit={handleEdit} {...props} />
           ))}
         </CardBody>
       </Card>
@@ -291,20 +456,49 @@ function Billing3() {
       </Dialog>
       <Dialog open={open === 2} handler={handleOpen}>
         <DialogHeader>Thêm khoản thu hàng tháng</DialogHeader>
-        <form onSubmit={() => handleOpen(0)}>
+        <form onSubmit={handleAddMonthlyPayments}>
           <DialogBody className="flex flex-col gap-4">
-            <Switch label="Quản lý" ripple={true} checked={true} />
-            <Input type="text" label="Name" />
-            <Input type="text" label="Relationship" />
-            <Input type="number" label="House Number" />
-            <Button
-              variant="gradient"
-              color="red"
-              onClick={() => handleDeleteMember()}
-              className="mr-1"
-            >
-              <span>Delete this member</span>
-            </Button>
+            <Switch
+              label="Phí dịch vụ chung cư"
+              ripple={true}
+              checked={checkedService}
+              onChange={(e) => setCheckedService(!checkedService)}
+            />
+            <Input
+              type="number"
+              label="Giá tiền dịch vụ chung cư 1 tháng"
+              disabled={!checkedService}
+            />
+            <Switch
+              label="Phí quản lý chung cư"
+              ripple={true}
+              checked={checkedManage}
+              onChange={(e) => setCheckedManage(!checkedManage)}
+            />
+            <Input
+              type="number"
+              label="Giá tiền quản lý chung cư 1 tháng"
+              disabled={!checkedManage}
+            />
+            <Switch
+              label="Phí gửi xe"
+              ripple={true}
+              checked={checkedParking}
+              onChange={(e) => setCheckedParking(!checkedParking)}
+            />
+            <Input
+              type="number"
+              label="Giá tiền gửi ô tô 1 tháng"
+              disabled={!checkedParking}
+            />
+            <Input
+              type="number"
+              label="Giá tiền gửi xe máy 1 tháng"
+              disabled={!checkedParking}
+            />
+            <Typography variant="small" color="red" className="!font-normal">
+              Chức năng này sẽ áp dụng cho tất cả các hộ
+            </Typography>
           </DialogBody>
           <DialogFooter>
             <Button
@@ -313,10 +507,63 @@ function Billing3() {
               onClick={handleOpen}
               className="mr-1"
             >
-              <span>Cancel</span>
+              <span>Hủy</span>
             </Button>
             <Button variant="gradient" color="green" type="submit">
-              <span>Confirm</span>
+              <span>Xác nhận</span>
+            </Button>
+          </DialogFooter>
+        </form>
+      </Dialog>
+      <Dialog open={open === 3} handler={handleOpen}>
+        <DialogHeader>Thông tin khoản thu</DialogHeader>
+        <form onSubmit={addNewPayment}>
+          <DialogBody className="flex flex-col gap-4">
+            <Input type="text" label="Số nhà" />
+            <Input type="text" label="Tên khoản thu" />
+            <Select
+              label="Chọn loại khoản thu"
+              value={chosenService}
+              onChange={(e) => setChosenService(e)}
+            >
+              {services.map((service) => (
+                <Option key={service} value={service}>
+                  {service}
+                </Option>
+              ))}
+            </Select>
+            <Input type="text" label="Số tiền" />
+            {chosenService === "Tiền nước" && (
+              <Input
+                type="text"
+                label="Số khối nước"
+                value={consumption}
+                onChange={(e) => setConsumption(e.target.value)}
+              />
+            )}
+            {chosenService === "Tiền điện" && (
+              <Input
+                type="text"
+                label="Số kwh sử dụng"
+                value={consumption}
+                onChange={(e) => setConsumption(e.target.value)}
+              />
+            )}
+            <Typography variant="small" color="red" className="!font-normal">
+              {error}
+            </Typography>
+          </DialogBody>
+          <DialogFooter>
+            <Button
+              variant="text"
+              color="red"
+              onClick={handleOpen}
+              className="mr-1"
+            >
+              <span>Hủy</span>
+            </Button>
+            <Button variant="gradient" color="green" type="submit">
+              <span>Xác nhận</span>
             </Button>
           </DialogFooter>
         </form>

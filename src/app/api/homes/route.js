@@ -32,6 +32,9 @@ export async function POST(req, res) {
   );
 }
 export async function GET(req, res) {
-  const homes = await prisma.home.findMany({ include: { members: true } });
+  const homes = await prisma.home.findMany({
+    include: { members: true },
+    orderBy: { id: "desc" },
+  });
   return new NextResponse(JSON.stringify(homes), { status: 200 });
 }

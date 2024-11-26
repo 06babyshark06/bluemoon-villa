@@ -133,6 +133,8 @@ export const GET = async (req, res) => {
       home: { include: { members: { where: { relationship: "Chủ hộ" } } } },
       bill: true,
     },
+    orderBy: {id: 'desc'},
+    where:{paid: false}
   });
   return new NextResponse(JSON.stringify(payments), { status: 200 });
 };

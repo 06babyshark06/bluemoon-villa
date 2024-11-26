@@ -48,7 +48,10 @@ function BillingCard({
   bill: { billName, type, money, consumption },
   home: { houseNumber, members },
   createdAt,
-  edit
+  edit,
+  open,
+  setId,
+  approved,
 }) {
   return (
     <Card shadow={false} className="rounded-lg border border-gray-300 p-4">
@@ -91,7 +94,13 @@ function BillingCard({
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <Button size="sm" variant="text" className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="text"
+            color="green"
+            className="flex items-center gap-2"
+            onClick={() => approved(id)}
+          >
             <HiCheck className="h-4 w-4 text-green-600" />
             <Typography className="!font-semibold text-xs text-green-600 md:block hidden">
               Xác nhận đóng tiền
@@ -99,7 +108,10 @@ function BillingCard({
           </Button>
           <Button size="sm" variant="text" className="flex items-center gap-2">
             <PencilIcon className="h-4 w-4 text-gray-600" />
-            <Typography className="!font-semibold text-xs text-gray-600 md:block hidden" onClick={() => edit(id)}>
+            <Typography
+              className="!font-semibold text-xs text-gray-600 md:block hidden"
+              onClick={() => edit(id)}
+            >
               Thay đổi
             </Typography>
           </Button>
@@ -108,6 +120,10 @@ function BillingCard({
             variant="text"
             color="red"
             className="flex items-center gap-2"
+            onClick={() => {
+              open(4);
+              setId(id);
+            }}
           >
             <TrashIcon className="h-4 w-4 text-red-500" />
             <Typography className="!font-semibold text-xs text-red-500 md:block hidden">
@@ -179,6 +195,9 @@ function Billing3() {
   const [typeFilter, setTypeFilter] = React.useState("");
   const [search, setSearch] = React.useState("");
   const [specificPayment, setSpecificPayment] = React.useState({});
+  const [billName, setBillName] = React.useState("");
+  const [money, setMoney] = React.useState("");
+  const [id, setId] = React.useState(null);
   const filteredPayments = payments.filter(({ bill: { type } }) =>
     typeFilter ? type === typeFilter : true
   );
@@ -302,11 +321,91 @@ function Billing3() {
   };
 
   const handleEdit = async (id) => {
-    // const response = await fetch(`/api/payments/${id}`);
-    // const data = await response.json();
-    // console.log(data);
-    // setSpecificPayment(data);
     handleOpen(3);
+    const response = await fetch(`/api/payments/${id}`);
+    const data = await response.json();
+    setSpecificPayment(data);
+    setId(data.id);
+    setBillName(data.bill.billName);
+    setMoney(data.bill.money);
+    setConsumption(data.bill.consumption);
+  };
+
+  const handleApproved = async (id) => {
+    handleOpen(5);
+    const response = await fetch(`/api/payments/${id}`);
+    const data = await response.json();
+    setSpecificPayment(data);
+    setId(data.id);
+  };
+
+  const editCurrentPayment = async (e) => {
+    e.preventDefault();
+    const billName = e.target[1].value;
+    if (!billName || !money) {
+      setError("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+    const response = await fetch(`/api/payments/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ billName, money, consumption }),
+    });
+    const data = await response.json();
+    if (data.error) {
+      setError(data.error);
+    } else {
+      toast.success("Đã cập nhật khoản thu");
+      setConsumption("");
+      setBillName("");
+      setMoney("");
+      setError("");
+      handleOpen(0);
+    }
+  };
+
+  const deletePayment = async () => {
+    const response = await fetch(`/api/payments/${id}`, {
+      method: "DELETE",
+    });
+    const data = await response.json();
+    if (data.error) {
+      toast.error(data.error);
+    } else {
+      toast.success("Đã xóa khoản thu");
+      handleOpen(0);
+    }
+  };
+
+  const approvePayment = async () => {
+    if (!money) {
+      setError("Hãy điền đầy đủ");
+      return;
+    }
+    if (money != specificPayment.bill.money) {
+      setError("Hãy nhập chính xác số tiền");
+      return;
+    } else {
+      const response = await fetch(`/api/payments/${specificPayment.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ paid: true, payAt: new Date().toISOString() }),
+      });
+      const data = await response.json();
+      if (data.error) {
+        setError(data.error);
+      } else {
+        toast.success("Đã hoàn thành khoản thu này");
+        setError("");
+        setMoney("");
+        handleOpen(0);
+      }
+    }
+    setError("");
   };
   React.useEffect(() => {
     const fetchPayments = async () => {
@@ -397,7 +496,14 @@ function Billing3() {
         </CardBody>
         <CardBody className="flex flex-col gap-4 !p-4">
           {searchedPayments.map((props, key) => (
-            <BillingCard key={key} edit={handleEdit} {...props} />
+            <BillingCard
+              key={key}
+              edit={handleEdit}
+              open={handleOpen}
+              {...props}
+              setId={setId}
+              approved={handleApproved}
+            />
           ))}
         </CardBody>
       </Card>
@@ -405,7 +511,7 @@ function Billing3() {
         <DialogHeader>Thêm khoản thu mới</DialogHeader>
         <form onSubmit={addNewPayment}>
           <DialogBody className="flex flex-col gap-4">
-            <Input type="text" label="Số nhà" />
+            <Input type="number" label="Số nhà" />
             <Input type="text" label="Tên khoản thu" />
             <Select
               label="Chọn loại khoản thu"
@@ -517,14 +623,26 @@ function Billing3() {
       </Dialog>
       <Dialog open={open === 3} handler={handleOpen}>
         <DialogHeader>Thông tin khoản thu</DialogHeader>
-        <form onSubmit={addNewPayment}>
+        <form onSubmit={editCurrentPayment}>
           <DialogBody className="flex flex-col gap-4">
-            <Input type="text" label="Số nhà" />
-            <Input type="text" label="Tên khoản thu" />
+            <Input
+              type="text"
+              label="Số nhà"
+              value={specificPayment?.home?.houseNumber}
+              onChange={()=>{}}
+              disabled={true}
+            />
+            <Input
+              type="text"
+              label="Tên khoản thu"
+              value={billName}
+              onChange={(e) => setBillName(e.target.value)}
+            />
             <Select
               label="Chọn loại khoản thu"
-              value={chosenService}
-              onChange={(e) => setChosenService(e)}
+              value={specificPayment?.bill?.type}
+              onChange={()=>{}}
+              disabled={true}
             >
               {services.map((service) => (
                 <Option key={service} value={service}>
@@ -532,8 +650,13 @@ function Billing3() {
                 </Option>
               ))}
             </Select>
-            <Input type="text" label="Số tiền" />
-            {chosenService === "Tiền nước" && (
+            <Input
+              type="text"
+              label="Số tiền"
+              value={money}
+              onChange={(e) => setMoney(e.target.value)}
+            />
+            {specificPayment?.bill?.type === "Tiền nước" && (
               <Input
                 type="text"
                 label="Số khối nước"
@@ -541,7 +664,7 @@ function Billing3() {
                 onChange={(e) => setConsumption(e.target.value)}
               />
             )}
-            {chosenService === "Tiền điện" && (
+            {specificPayment?.bill?.type === "Tiền điện" && (
               <Input
                 type="text"
                 label="Số kwh sử dụng"
@@ -567,6 +690,62 @@ function Billing3() {
             </Button>
           </DialogFooter>
         </form>
+      </Dialog>
+      <Dialog open={open === 4} handler={handleOpen}>
+        <DialogHeader>Xác nhận xóa</DialogHeader>
+        <DialogBody className="flex flex-col gap-4">
+          Không thể khôi phục khi xóa. Vẫn xóa?
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            variant="text"
+            color="red"
+            onClick={handleOpen}
+            className="mr-1"
+          >
+            <span>Hủy</span>
+          </Button>
+          <Button
+            variant="gradient"
+            color="red"
+            type="submit"
+            onClick={() => deletePayment()}
+          >
+            <span>Xóa</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
+      <Dialog open={open === 5} handler={handleOpen}>
+        <DialogHeader>Xác nhận đóng tiền</DialogHeader>
+        <DialogBody className="flex flex-col gap-4">
+          <Input
+            type="number"
+            label="Nhập lại số tiền đã đóng"
+            value={money}
+            onChange={(e) => setMoney(e.target.value)}
+          />
+          <Typography variant="small" color="red" className="!font-normal">
+            {error}
+          </Typography>
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            variant="text"
+            color="red"
+            onClick={handleOpen}
+            className="mr-1"
+          >
+            <span>Hủy</span>
+          </Button>
+          <Button
+            variant="gradient"
+            color="green"
+            type="submit"
+            onClick={() => approvePayment()}
+          >
+            <span>Xác nhận</span>
+          </Button>
+        </DialogFooter>
       </Dialog>
     </section>
   );

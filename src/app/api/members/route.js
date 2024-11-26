@@ -4,7 +4,9 @@ import { NextResponse } from "next/server";
 export const POST = async (req, res) => {
   const { name, relationship, houseNumber } = await req.json();
   const newHouseNumber = parseInt(houseNumber, 10);
-  const home=await prisma.home.findUnique({where: {houseNumber: newHouseNumber}});
+  const home = await prisma.home.findUnique({
+    where: { houseNumber: newHouseNumber },
+  });
   if (!home) {
     return new NextResponse(
       JSON.stringify({ error: "Nhà này chưa được đăng ký" }),
@@ -26,6 +28,9 @@ export const POST = async (req, res) => {
 };
 
 export const GET = async (req, res) => {
-  const members = await prisma.member.findMany({include: {home: true}});
+  const members = await prisma.member.findMany({
+    include: { home: true },
+    orderBy: { id: "desc" },
+  });
   return new NextResponse(JSON.stringify(members), { status: 200 });
-}
+};

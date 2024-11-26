@@ -17,7 +17,7 @@ const DashboardLayout = ({ children }) => {
     <div className="flex justify-between">
       <Sidebar1 />
       {children}
-      <SpeedDialWithTextInside/>
+      {/* <SpeedDialWithTextInside/> */}
     </div>
   );
 };

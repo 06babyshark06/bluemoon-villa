@@ -1,5 +1,9 @@
-'use client'
-import { PencilIcon } from "@heroicons/react/24/solid";
+"use client";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  PencilIcon,
+} from "@heroicons/react/24/solid";
 import {
   ArrowDownTrayIcon,
   MagnifyingGlassIcon,
@@ -17,17 +21,18 @@ import {
   Tooltip,
   Input,
 } from "@material-tailwind/react";
- 
-const TABLE_HEAD = ["Transaction", "Amount", "Date", "Status", "Account", ""];
- 
+import React from "react";
+
+const TABLE_HEAD = ["Tên khoản thu", "Số tiền", "Ngày thanh toán", "Trạng thái", "Hộ gia đình", ""];
+
 const TABLE_ROWS = [
   {
     img: "https://docs.material-tailwind.com/img/logos/logo-spotify.svg",
-    name: "Spotify",
-    amount: "$2,500",
-    date: "Wed 3:00pm",
-    status: "paid",
-    account: "visa",
+    name: "Tiền nước tháng 11",
+    amount: "999999999",
+    date: "2025 02 02 02 02 02 02",
+    status: "Đẫ hoàn thành",
+    account: "An",
     accountNumber: "1234",
     expiry: "06/2026",
   },
@@ -112,34 +117,50 @@ const TABLE_ROWS = [
     expiry: "06/2026",
   },
 ];
- 
+
 export default function TransactionsTable() {
+  const [active, setActive] = React.useState(1);
+  const [open, setOpen] = React.useState(0);
+  const handleOpen = (value) => setOpen(open === value ? 0 : value);
+
+  const next = () => {
+    if (active === 10) return;
+
+    setActive(active + 1);
+  };
+
+  const prev = () => {
+    if (active === 1) return;
+
+    setActive(active - 1);
+  };
   return (
     <Card className="mt-16 h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <div>
             <Typography variant="h5" color="blue-gray">
-              Recent Payments
+              Thanh toán gần đây
             </Typography>
             <Typography color="gray" className="mt-1 font-normal">
-              These are details about the last payments
+              Đây là thông tin các thanh toán gần đây
             </Typography>
           </div>
           <div className="flex w-full shrink-0 gap-2 md:w-max">
             <div className="w-full md:w-72">
               <Input
-                label="Search"
+                label="Tìm kiếm"
                 icon={<MagnifyingGlassIcon className="h-5 w-5" />}
               />
             </div>
             <Button className="flex items-center gap-3" size="sm">
-              <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4" /> Download
+              <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4" /> Tải
+              xuống
             </Button>
           </div>
         </div>
       </CardHeader>
-      <CardBody className="overflow-scroll px-0">
+      <CardBody className="scroll px-0">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
@@ -172,13 +193,13 @@ export default function TransactionsTable() {
                   accountNumber,
                   expiry,
                 },
-                index,
+                index
               ) => {
                 const isLast = index === TABLE_ROWS.length - 1;
                 const classes = isLast
                   ? "p-4"
                   : "p-4 border-b border-blue-gray-50";
- 
+
                 return (
                   <tr key={name}>
                     <td className={classes}>
@@ -274,41 +295,42 @@ export default function TransactionsTable() {
                     </td>
                   </tr>
                 );
-              },
+              }
             )}
           </tbody>
         </table>
       </CardBody>
       <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button variant="outlined" size="sm">
-          Previous
-        </Button>
-        <div className="flex items-center gap-2">
-          <IconButton variant="outlined" size="sm">
-            1
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            2
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            3
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            ...
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            8
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            9
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            10
-          </IconButton>
-        </div>
-        <Button variant="outlined" size="sm">
-          Next
-        </Button>
+        <section className="container mx-auto py-5 px-4">
+          <div className="flex items-center gap-8 justify-between">
+            <Typography variant="small" className="font-bold text-gray-600">
+              Trang <strong className="text-gray-900">{active}</strong> trên{" "}
+              <strong className="text-gray-900">10</strong>
+            </Typography>
+            <div className="flex gap-4 items-center">
+              <Button
+                size="sm"
+                variant="outlined"
+                onClick={prev}
+                disabled={active === 1}
+                className="flex gap-1 items-center border-gray-300"
+              >
+                <ChevronLeftIcon strokeWidth={3} className="h-3 w-3" />
+                Trước
+              </Button>
+              <Button
+                size="sm"
+                variant="outlined"
+                onClick={next}
+                disabled={active === 10}
+                className="flex gap-1 items-center border-gray-300"
+              >
+                Sau
+                <ChevronRightIcon strokeWidth={3} className="h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+        </section>
       </CardFooter>
     </Card>
   );

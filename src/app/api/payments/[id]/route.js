@@ -18,21 +18,32 @@ export const PUT = async (req, res) => {
   const { id } = res.params;
   const newId = parseInt(id, 10);
   const { billName, money, consumption, payAt, paid } = await req.json();
-  const payment = await prisma.payment.update({
-    where: { id: newId },
-    data: {
-      payAt,
-      paid,
-      bill: {
-        update: {
-          billName,
-          money: parseInt(money, 10),
-          consumption: parseInt(consumption, 10),
+  if (!paid) {
+    const payment = await prisma.payment.update({
+      where: { id: newId },
+      data: {
+        payAt,
+        paid,
+        bill: {
+          update: {
+            billName,
+            money: parseInt(money, 10),
+            consumption: parseInt(consumption, 10),
+          },
         },
       },
-    },
-  });
-  return new NextResponse(JSON.stringify(payment), { status: 200 });
+    });
+    return new NextResponse(JSON.stringify(payment), { status: 200 });
+  } else {
+    const payment = await prisma.payment.update({
+      where: { id: newId },
+      data: {
+        payAt,
+        paid,
+      },
+    });
+    return new NextResponse(JSON.stringify(payment), { status: 200 });
+  }
 };
 
 export const DELETE = async (req, res) => {

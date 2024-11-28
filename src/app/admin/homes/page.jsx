@@ -31,6 +31,7 @@ const statusMoved = "Đã chuyển đi";
 export default function TableWithStripedRows() {
   const [active, setActive] = React.useState(1);
   const [open, setOpen] = React.useState(0);
+  const [error, setError] = React.useState("");
   const [homes, setHomes] = React.useState([]);
   const [owner, setOwner] = React.useState("");
   const [size, setSize] = React.useState(0);
@@ -45,7 +46,7 @@ export default function TableWithStripedRows() {
           (home) =>
             home.members
               .filter((member) => member.relationship === "Chủ hộ")[0]
-              .name.toLowerCase()
+              ?.name.toLowerCase()
               .includes(search.toLowerCase()) ||
             statusLiving.toLowerCase().includes(search.toLowerCase()) ||
             statusMoved.toLowerCase().includes(search.toLowerCase()) ||
@@ -60,7 +61,10 @@ export default function TableWithStripedRows() {
   const endIndex = startIndex + membersPerPage;
   const currentHomes = filteredHomes.slice(startIndex, endIndex);
 
-  const handleOpen = (value) => setOpen(open === value ? 0 : value);
+  const handleOpen = (value) => {
+    setError("");
+    setOpen(open === value ? 0 : value);
+  };
 
   const next = () => {
     if (active === totalPages) return;
@@ -82,7 +86,7 @@ export default function TableWithStripedRows() {
     const cars = e.target[3].value;
     const bikes = e.target[4].value;
     if (!owner || !size || !houseNumber || !cars || !bikes) {
-      toast.error("Hãy điền đủ tất cả thống tin");
+      setError("Hãy điền đủ tất cả thống tin");
       return;
     }
     const response = await fetch("/api/homes", {
@@ -95,11 +99,11 @@ export default function TableWithStripedRows() {
     const data = await response.json();
     console.log(data);
     if (data.error) {
-      toast.error(data.error);
+      setError(data.error);
     } else {
       toast.success("Đã thêm hộ thành công");
+      handleOpen(0);
     }
-    setOpen(0);
   };
 
   const handleEditHome = (id) => {
@@ -114,10 +118,15 @@ export default function TableWithStripedRows() {
     setCars(home.cars);
     setBikes(home.bikes);
     setId(id);
+    console.log(id);
   };
 
   const updateHome = async (e) => {
     e.preventDefault();
+    if (!size || !cars || !bikes) {
+      setError("Hãy điền đủ tất cả thống tin");
+      return;
+    }
     const response = await fetch(`/api/homes/${id}`, {
       method: "PUT",
       headers: {
@@ -128,7 +137,7 @@ export default function TableWithStripedRows() {
     const data = await response.json();
     console.log(data);
     if (data.error) {
-      toast.error(data.error);
+      setError(data.error);
     } else {
       toast.success("Đã cập nhật hộ thành công");
     }
@@ -146,13 +155,14 @@ export default function TableWithStripedRows() {
     const data = await response.json();
     console.log(data);
     if (data.error) {
-      toast.error(data.error);
+      setError(data.error);
     } else {
       toast.success("Đã xác nhận chuyển đi thành công");
     }
     handleOpen(0);
   };
   const handleDeleteHome = async () => {
+    console.log(id);
     const response = await fetch(`/api/homes/${id}`, {
       method: "DELETE",
     });
@@ -162,6 +172,12 @@ export default function TableWithStripedRows() {
       toast.error(data.error);
     } else {
       toast.success("Đã xóa hộ này");
+      setOwner("");
+      setSize(0);
+      setHouseNumber(0);
+      setCars(0);
+      setBikes(0);
+      setId(0);
     }
     handleOpen(0);
   };
@@ -320,6 +336,16 @@ export default function TableWithStripedRows() {
               Trang <strong className="text-gray-900">{active}</strong> trên{" "}
               <strong className="text-gray-900">{totalPages}</strong>
             </Typography>
+            {/* <Button
+                size="sm"
+                variant="outlined"
+                onClick={prev}
+                disabled={active === 1}
+                className="flex gap-1 items-center border-gray-300"
+              >
+                <ChevronLeftIcon strokeWidth={3} className="h-3 w-3" />
+                Trước
+              </Button> */}
             <div className="flex gap-4 items-center">
               <Button
                 size="sm"
@@ -354,6 +380,9 @@ export default function TableWithStripedRows() {
             <Input type="number" label="Số nhà" />
             <Input type="number" label="Số lượng ô tô" />
             <Input type="number" label="Số lượng xe máy" />
+            <Typography variant="small" color="red" className="font-semibold">
+              {error}
+            </Typography>
           </DialogBody>
           <DialogFooter>
             <Button
@@ -406,6 +435,9 @@ export default function TableWithStripedRows() {
               value={bikes}
               onChange={(e) => setBikes(e.target.value)}
             />
+            <Typography variant="small" color="red" className="font-semibold">
+              {error}
+            </Typography>
             <Button
               variant="outlined"
               color="red"

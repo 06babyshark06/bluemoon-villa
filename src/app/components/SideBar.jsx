@@ -64,7 +64,7 @@ function SidebarLight() {
               <RiAdminFill className="w-5 h-5" />
             </ListItemPrefix>
             <Typography className="mr-auto font-normal text-inherit">
-              Trần Đức An
+              Admin
             </Typography>
             <ChevronDownIcon
               strokeWidth={3}
@@ -132,14 +132,16 @@ function SidebarLight() {
             Các khoản thu
           </ListItem>
         </Link>
-        <Link href="/admin/homes
-        ">
-        <ListItem className={LIST_ITEM_STYLES}>
-          <ListItemPrefix>
-            <Square2StackIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Danh sách hộ gia đình
-        </ListItem>
+        <Link
+          href="/admin/homes
+        "
+        >
+          <ListItem className={LIST_ITEM_STYLES}>
+            <ListItemPrefix>
+              <Square2StackIcon className="h-5 w-5" />
+            </ListItemPrefix>
+            Danh sách hộ gia đình
+          </ListItem>
         </Link>
         <Link href="/admin/members">
           <ListItem className={LIST_ITEM_STYLES}>
@@ -152,12 +154,14 @@ function SidebarLight() {
       </List>
       <hr className="my-2 border-gray-200" />
       <List>
-        <ListItem className={LIST_ITEM_STYLES}>
-          <ListItemPrefix>
-            <ChatBubbleLeftEllipsisIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Help & Support
-        </ListItem>
+        <Link href="/admin/help">
+          <ListItem className={LIST_ITEM_STYLES}>
+            <ListItemPrefix>
+              <ChatBubbleLeftEllipsisIcon className="h-5 w-5" />
+            </ListItemPrefix>
+            Help & Support
+          </ListItem>
+        </Link>
         <Link href="/admin/register">
           <ListItem className={LIST_ITEM_STYLES}>
             <ListItemPrefix>

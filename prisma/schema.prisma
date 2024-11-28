@@ -35,7 +35,7 @@ model Member {
   registerDate DateTime @default(now())
   leaveDate DateTime?
   relationship String
-  home Home @relation(fields:[homeId],references:[id])
+  home Home @relation(fields:[homeId],references:[id],onDelete: Cascade)
   homeId Int
 }
 model Home {
@@ -61,8 +61,8 @@ model Payment {
   createdAt DateTime @default(now())
   payAt DateTime?
   paid Boolean @default(false)
-  home Home @relation(fields:[homeId],references:[id])
+  home Home @relation(fields:[homeId],references:[id],onDelete: Cascade)
   homeId Int 
-  bill Bill @relation(fields:[billId],references:[id])
+  bill Bill @relation(fields:[billId],references:[id],onDelete: Cascade)
   billId Int @unique
 }

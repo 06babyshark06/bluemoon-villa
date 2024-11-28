@@ -41,7 +41,15 @@ export default function TableWithStripedRows() {
           (member) =>
             member.name.toLowerCase().includes(search.toLowerCase()) ||
             member.relationship.toLowerCase().includes(search.toLowerCase()) ||
-            member.home.houseNumber === parseInt(search, 10)
+            new Date(member.registerDate)
+              .toLocaleString()
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+            new Date(member?.leaveDate)
+              .toLocaleString()
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+            member.home.houseNumber.toString().includes(search)
         )
       : members;
   const totalPages = Math.ceil(filteredMembers.length / membersPerPage);
@@ -54,7 +62,7 @@ export default function TableWithStripedRows() {
 
     // Đếm số lần xuất hiện của từng phần tử
     for (let item of arr) {
-      if (item.relationship === "Chủ hộ")
+      if (item.relationship === "Chủ hộ" && item.home.isLiving)
         elementCount[item.home.houseNumber] =
           (elementCount[item.home.houseNumber] || 0) + 1;
     }
@@ -70,7 +78,10 @@ export default function TableWithStripedRows() {
   }
   const owners = findDuplicates(members);
 
-  const handleOpen = (value) => setOpen(open === value ? 0 : value);
+  const handleOpen = (value) => {
+    setOpen(open === value ? 0 : value);
+    setError("");
+  };
 
   const next = () => {
     if (active === totalPages) return;
@@ -104,10 +115,10 @@ export default function TableWithStripedRows() {
     // console.log(data);
     if (data.error) {
       setError(data.error);
+      return;
     } else {
       toast.success("Đẫ thêm thành viên thành công");
-      setOpen(0);
-      setError("");
+      handleOpen(0);
     }
   };
 
@@ -117,9 +128,8 @@ export default function TableWithStripedRows() {
     setName(members[index].name);
     setRelationship(members[index].relationship);
     if (members[index].relationship === "Chủ hộ") {
-      if (owners.includes(String(members[index].home.houseNumber))) {
+      if (owners.includes(members[index].home.houseNumber.toString())) {
         setDisabled(false);
-        console.log(1);
       } else setDisabled(true);
     } else setDisabled(false);
     setHouseNumber(members[index].home.houseNumber);
@@ -153,13 +163,18 @@ export default function TableWithStripedRows() {
     if (!name || !relationship || !houseNumber) {
       setError("Hãy hoàn thành tất cả các phần");
     }
-    const newDate=new Date().toISOString()
+    const newDate = new Date().toISOString();
     const response = await fetch(`/api/members/${members[index].id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, relationship, houseNumber, leaveDate:newDate }),
+      body: JSON.stringify({
+        name,
+        relationship,
+        houseNumber,
+        leaveDate: newDate,
+      }),
     });
     const data = await response.json();
     console.log(data);

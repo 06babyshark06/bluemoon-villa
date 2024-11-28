@@ -5,16 +5,25 @@ export const PUT = async (req, { params }) => {
   const { id } = params;
   const newId = parseInt(id, 10);
   const { name, relationship, houseNumber, leaveDate } = await req.json();
-  const house = await prisma.home.findUnique({ where: { houseNumber: parseInt(houseNumber, 10) } });
-  if (!house) {
-    return new NextResponse(JSON.stringify({ error: "Nhà không tìm thấy" }), { status: 400 });
-  }
-  const member = await prisma.member.update({ where: { id: newId }, data: {
-    name,
-    relationship,
-    leaveDate,
-    home: { connect: { houseNumber: parseInt(houseNumber, 10) } },
-  } });
+  const home = await prisma.home.findFirst({
+    where: {
+      houseNumber: parseInt(houseNumber, 10),
+      members: {
+        some: {
+          id: newId, // Ensure a member with this id exists
+        },
+      },
+    },
+  });
+  const member = await prisma.member.update({
+    where: { id: newId },
+    data: {
+      name,
+      relationship,
+      leaveDate,
+      home: { connect: { id: home.id } },
+    },
+  });
   return new NextResponse(JSON.stringify(member), { status: 200 });
 };
 

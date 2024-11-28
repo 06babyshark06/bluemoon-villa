@@ -629,7 +629,7 @@ function Billing3() {
               type="text"
               label="Số nhà"
               value={specificPayment?.home?.houseNumber}
-              onChange={()=>{}}
+              onChange={() => {}}
               disabled={true}
             />
             <Input
@@ -638,18 +638,12 @@ function Billing3() {
               value={billName}
               onChange={(e) => setBillName(e.target.value)}
             />
-            <Select
+            <Input
               label="Chọn loại khoản thu"
               value={specificPayment?.bill?.type}
-              onChange={()=>{}}
+              onChange={() => {}}
               disabled={true}
-            >
-              {services.map((service) => (
-                <Option key={service} value={service}>
-                  {service}
-                </Option>
-              ))}
-            </Select>
+            />
             <Input
               type="text"
               label="Số tiền"

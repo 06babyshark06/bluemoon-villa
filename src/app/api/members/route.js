@@ -4,8 +4,8 @@ import { NextResponse } from "next/server";
 export const POST = async (req, res) => {
   const { name, relationship, houseNumber } = await req.json();
   const newHouseNumber = parseInt(houseNumber, 10);
-  const home = await prisma.home.findUnique({
-    where: { houseNumber: newHouseNumber },
+  const home = await prisma.home.findFirst({
+    where: { houseNumber: newHouseNumber, isLiving: true },
   });
   if (!home) {
     return new NextResponse(
@@ -17,7 +17,7 @@ export const POST = async (req, res) => {
       data: {
         name,
         relationship,
-        home: { connect: { houseNumber: newHouseNumber } },
+        home: { connect: { id: home.id } },
       },
     });
   }

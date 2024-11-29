@@ -1,54 +1,78 @@
-'use client'
-import { useState } from "react";
+"use client";
+import React from "react";
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionBody,
+} from "@material-tailwind/react";
+import { faq } from "@/app/utils/faq";
 
-export default function Chat() {
-  const [message, setMessage] = useState("");
-  const [chatHistory, setChatHistory] = useState([]);
+function Icon({ id, open }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+      stroke="currentColor"
+      className={`${
+        id === open ? "rotate-180" : ""
+      } h-5 w-5 transition-transform`}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+      />
+    </svg>
+  );
+}
 
-  const sendMessage = async () => {
-    if (!message.trim()) return;
+function AccordionCustomIcon() {
 
-    const userMessage = { role: "user", content: message };
-    setChatHistory([...chatHistory, userMessage]);
+  const [openOuter, setOpenOuter] = React.useState(null); // Tracks outer accordion state
+  const [openInner, setOpenInner] = React.useState(null); // Tracks inner accordion state
 
-    try {
-      const response = await fetch("/api/chatbot", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
-      });
+  const handleOpenOuter = (id) => {
+    setOpenOuter(openOuter === id ? null : id); // Toggle outer accordion
+  };
 
-      const data = await response.json();
-      if (response.ok) {
-        const botMessage = { role: "bot", content: data.reply };
-        setChatHistory([...chatHistory, userMessage, botMessage]);
-        setMessage("");
-      } else {
-        console.error(data.error);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
+  const handleOpenInner = (id) => {
+    setOpenInner(openInner === id ? null : id); // Toggle inner accordion
   };
 
   return (
-    <div style={{ padding: "20px", width: "100%", maxWidth: "600px", margin: "100px auto" }}>
-      <h1>Chatbot</h1>
-      <div style={{ marginBottom: "20px" }}>
-        {chatHistory.map((chat, index) => (
-          <div key={index} style={{ margin: "10px 0" }}>
-            <strong>{chat.role === "user" ? "You" : "Bot"}:</strong> {chat.content}
-          </div>
-        ))}
+    <div className="w-full flex justify-center mt-9 py-10">
+      <div className="w-3/4">
+      {faq.map((item) => (
+        <Accordion
+          key={item.id}
+          open={openOuter === item.id}
+          icon={<Icon id={item.id} open={openOuter} />}
+        >
+          <AccordionHeader onClick={() => handleOpenOuter(item.id)}>
+            {item.header}
+          </AccordionHeader>
+          {item.questions.map((question) => (
+            <AccordionBody key={question.id}>
+              <Accordion
+                key={`inner-${question.id}`}
+                open={openInner === question.id}
+                icon={<Icon id={question.id} open={openInner} />}
+                className="pl-6"
+              >
+                <AccordionHeader onClick={() => handleOpenInner(question.id)}>
+                  {question.question}
+                </AccordionHeader>
+                <AccordionBody className="pl-4">{question.answer}</AccordionBody>
+              </Accordion>
+            </AccordionBody>
+          ))}
+        </Accordion>
+      ))}
+
       </div>
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Type your message"
-        style={{ width: "70%", marginRight: "10px" }}
-      />
-      <button onClick={sendMessage}>Send</button>
     </div>
   );
 }
+export default AccordionCustomIcon;

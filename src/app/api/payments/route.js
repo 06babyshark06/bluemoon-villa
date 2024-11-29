@@ -134,7 +134,6 @@ export const GET = async (req, res) => {
       bill: true,
     },
     orderBy: {id: 'desc'},
-    where:{paid: false}
   });
   return new NextResponse(JSON.stringify(payments), { status: 200 });
 };

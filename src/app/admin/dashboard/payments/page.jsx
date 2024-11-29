@@ -21,9 +21,27 @@ import {
   Tooltip,
   Input,
 } from "@material-tailwind/react";
+import { FaHandHoldingWater } from "react-icons/fa";
+import {
+  FcAssistant,
+  FcDonate,
+  FcElectricity,
+  FcGlobe,
+  FcHome,
+  FcInfo,
+  FcOrganization,
+} from "react-icons/fc";
 import React from "react";
+import { TbParkingCircleFilled } from "react-icons/tb";
 
-const TABLE_HEAD = ["Tên khoản thu", "Số tiền", "Ngày thanh toán", "Trạng thái", "Hộ gia đình", ""];
+const TABLE_HEAD = [
+  "Tên khoản thu",
+  "Số tiền",
+  "Ngày thanh toán",
+  "Trạng thái",
+  "Hộ gia đình",
+  "",
+];
 
 const TABLE_ROWS = [
   {
@@ -34,7 +52,7 @@ const TABLE_ROWS = [
     status: "Đẫ hoàn thành",
     account: "An",
     accountNumber: "1234",
-    expiry: "06/2026",
+    expiry: "Nhà 11",
   },
   {
     img: "https://docs.material-tailwind.com/img/logos/logo-amazon.svg",
@@ -76,51 +94,12 @@ const TABLE_ROWS = [
     accountNumber: "1234",
     expiry: "06/2026",
   },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
 ];
 
 export default function TransactionsTable() {
   const [active, setActive] = React.useState(1);
   const [open, setOpen] = React.useState(0);
+  const [payments, setPayments] = React.useState([]);
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
 
   const next = () => {
@@ -134,6 +113,15 @@ export default function TransactionsTable() {
 
     setActive(active - 1);
   };
+  React.useEffect(() => {
+    const fetchPayments = async () => {
+      const response = await fetch("/api/payments");
+      const data = await response.json();
+      console.log(data);
+      setPayments(data.filter((payment) => payment.paid));
+    };
+    fetchPayments();
+  }, [open]);
   return (
     <Card className="mt-16 h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -181,17 +169,14 @@ export default function TransactionsTable() {
             </tr>
           </thead>
           <tbody>
-            {TABLE_ROWS.map(
+            {payments.map(
               (
                 {
-                  img,
-                  name,
-                  amount,
-                  date,
-                  status,
-                  account,
-                  accountNumber,
-                  expiry,
+                  id,
+                  bill: { billName, type, money, consumption },
+                  home: { houseNumber, members },
+                  paid,
+                  payAt,
                 },
                 index
               ) => {
@@ -201,21 +186,38 @@ export default function TransactionsTable() {
                   : "p-4 border-b border-blue-gray-50";
 
                 return (
-                  <tr key={name}>
+                  <tr key={id}>
                     <td className={classes}>
                       <div className="flex items-center gap-3">
-                        <Avatar
-                          src={img}
-                          alt={name}
-                          size="md"
-                          className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1"
-                        />
+                        <div className="border border-gray-200 p-2.5 rounded-lg">
+                          {type == "Tiền điện" && (
+                            <FcElectricity className="h-6 w-6 text-gray-900" />
+                          )}
+                          {type == "Tiền nước" && (
+                            <FaHandHoldingWater className="h-6 w-6 text-gray-900" />
+                          )}
+                          {type == "Tiền mạng" && (
+                            <FcGlobe className="h-6 w-6 text-gray-900" />
+                          )}
+                          {type == "Tiền từ thiện" && (
+                            <FcDonate className="h-6 w-6 text-gray-900" />
+                          )}
+                          {type == "Dịch vụ chung cư" && (
+                            <FcAssistant className="h-6 w-6 text-gray-900" />
+                          )}
+                          {type == "Quản lý chung cư" && (
+                            <FcOrganization className="h-6 w-6 text-gray-900" />
+                          )}
+                          {type == "Gửi xe" && (
+                            <TbParkingCircleFilled className="h-6 w-6 text-gray-900" />
+                          )}
+                        </div>
                         <Typography
                           variant="small"
                           color="blue-gray"
                           className="font-bold"
                         >
-                          {name}
+                          {billName}
                         </Typography>
                       </div>
                     </td>
@@ -225,7 +227,7 @@ export default function TransactionsTable() {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {amount}
+                        {`${money} VND`}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -234,7 +236,7 @@ export default function TransactionsTable() {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {date}
+                        {new Date(payAt).toLocaleString()}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -242,11 +244,11 @@ export default function TransactionsTable() {
                         <Chip
                           size="sm"
                           variant="ghost"
-                          value={status}
+                          value="Đã đóng tiền"
                           color={
-                            status === "paid"
+                            paid
                               ? "green"
-                              : status === "pending"
+                              : paid === "pending"
                               ? "amber"
                               : "red"
                           }
@@ -256,17 +258,9 @@ export default function TransactionsTable() {
                     <td className={classes}>
                       <div className="flex items-center gap-3">
                         <div className="h-9 w-12 rounded-md border border-blue-gray-50 p-1">
-                          <Avatar
-                            src={
-                              account === "visa"
-                                ? "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/logos/visa.png"
-                                : "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/logos/mastercard.png"
-                            }
-                            size="sm"
-                            alt={account}
-                            variant="square"
-                            className="h-full w-full object-contain p-1"
-                          />
+                          <div className="border border-gray-200 p-2.5 rounded-lg">
+                            <FcHome className="h-6 w-6 text-gray-900" />
+                          </div>
                         </div>
                         <div className="flex flex-col">
                           <Typography
@@ -274,22 +268,22 @@ export default function TransactionsTable() {
                             color="blue-gray"
                             className="font-normal capitalize"
                           >
-                            {account.split("-").join(" ")} {accountNumber}
+                            {members[0].name}
                           </Typography>
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal opacity-70"
                           >
-                            {expiry}
+                            {`Nhà số: ${houseNumber}`}
                           </Typography>
                         </div>
                       </div>
                     </td>
                     <td className={classes}>
-                      <Tooltip content="Edit User">
+                      <Tooltip content="Thông tin chi tiết">
                         <IconButton variant="text">
-                          <PencilIcon className="h-4 w-4" />
+                          <FcInfo className="h-6 w-6 text-gray-900" />
                         </IconButton>
                       </Tooltip>
                     </td>

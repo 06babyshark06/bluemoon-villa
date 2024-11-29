@@ -50,10 +50,10 @@ export default function TableWithStripedRows() {
               .includes(search.toLowerCase()) ||
             statusLiving.toLowerCase().includes(search.toLowerCase()) ||
             statusMoved.toLowerCase().includes(search.toLowerCase()) ||
-            home.houseNumber === parseInt(search, 10) ||
-            home.size === parseInt(search, 10) ||
-            home.cars === parseInt(search, 10) ||
-            home.bikes === parseInt(search, 10)
+            home.houseNumber.toString().includes(search) ||
+            home.size.toString().includes(search) ||
+            home.cars.toString().includes(search) ||
+            home.bikes.toString().includes(search)
         )
       : homes;
   const totalPages = Math.ceil(filteredHomes.length / membersPerPage);

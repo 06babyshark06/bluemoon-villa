@@ -8,6 +8,10 @@ import {
   DialogFooter,
   DialogHeader,
   Input,
+  Menu,
+  MenuHandler,
+  MenuItem,
+  MenuList,
   Typography,
 } from "@material-tailwind/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
@@ -22,12 +26,12 @@ const TABLE_HEAD = [
   "Ngày chuyển đi",
   "",
 ];
-const membersPerPage = 5;
 
 export default function TableWithStripedRows() {
   const [disabled, setDisabled] = React.useState(true);
   const [active, setActive] = React.useState(1);
   const [open, setOpen] = React.useState(0);
+  const [membersPerPage, setMembersPerPage] = React.useState(5);
   const [members, setMembers] = React.useState([]);
   const [name, setName] = React.useState("");
   const [relationship, setRelationship] = React.useState("");
@@ -341,6 +345,21 @@ export default function TableWithStripedRows() {
               Trang <strong className="text-gray-900">{active}</strong> trên{" "}
               <strong className="text-gray-900">{totalPages}</strong>
             </Typography>
+            <Menu
+              animate={{
+                mount: { y: 0 },
+                unmount: { y: 25 },
+              }}
+            >
+              <MenuHandler>
+                <Button variant="outlined">{membersPerPage} người</Button>
+              </MenuHandler>
+              <MenuList>
+                <MenuItem onClick={() => setMembersPerPage(5)}>5 người</MenuItem>
+                <MenuItem onClick={() => setMembersPerPage(10)}>10 người</MenuItem>
+                <MenuItem onClick={() => setMembersPerPage(20)}>20 người</MenuItem>
+              </MenuList>
+            </Menu>
             <div className="flex gap-4 items-center">
               <Button
                 size="sm"

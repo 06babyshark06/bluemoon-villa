@@ -412,7 +412,7 @@ function Billing3() {
       const response = await fetch("/api/payments");
       const data = await response.json();
       console.log(data);
-      setPayments(data);
+      setPayments(data.filter(payment=>!payment.paid));
     };
     fetchPayments();
   }, [open]);

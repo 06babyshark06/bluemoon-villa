@@ -159,7 +159,7 @@ function SidebarLight() {
             <ListItemPrefix>
               <ChatBubbleLeftEllipsisIcon className="h-5 w-5" />
             </ListItemPrefix>
-            Help & Support
+            Hỗ trợ và giải đáp
           </ListItem>
         </Link>
         <Link href="/admin/register">

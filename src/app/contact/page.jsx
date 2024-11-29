@@ -34,7 +34,7 @@ const Contact = () => {
             I am admin too.
           </Typography>
           <Typography variant="p" color="blue-gray" className="my-3">
-            This is our repository : <a className="text-blue-600" href="https://github.com/06babyshark06">My perfect project</a>
+            This is our repository : <a className="text-blue-600" href="https://github.com/06babyshark06/bluemoon-villa">Bluemoon-villa</a>
           </Typography>
           <Typography variant="p" color="blue-gray" className="my-3">
             Phone number : 0392225886

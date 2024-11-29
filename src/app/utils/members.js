@@ -17,7 +17,7 @@ export const members = [
     {
       img: `tranducan.jpg`,
       name: "Nguyễn Đình Tuân",
-      title: "Marketing Specialist",
+      title: "Tester",
     },
     {
       img: `tranducan.jpg`,

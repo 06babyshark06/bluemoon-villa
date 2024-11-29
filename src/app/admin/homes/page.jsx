@@ -8,6 +8,10 @@ import {
   DialogFooter,
   DialogHeader,
   Input,
+  Menu,
+  MenuHandler,
+  MenuItem,
+  MenuList,
   Typography,
 } from "@material-tailwind/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
@@ -32,6 +36,7 @@ export default function TableWithStripedRows() {
   const [active, setActive] = React.useState(1);
   const [open, setOpen] = React.useState(0);
   const [error, setError] = React.useState("");
+  const [homesPerPage, setHomesPerPage] = React.useState(5);
   const [homes, setHomes] = React.useState([]);
   const [owner, setOwner] = React.useState("");
   const [size, setSize] = React.useState(0);
@@ -56,9 +61,9 @@ export default function TableWithStripedRows() {
             home.bikes.toString().includes(search)
         )
       : homes;
-  const totalPages = Math.ceil(filteredHomes.length / membersPerPage);
-  const startIndex = (active - 1) * membersPerPage;
-  const endIndex = startIndex + membersPerPage;
+  const totalPages = Math.ceil(filteredHomes.length / homesPerPage);
+  const startIndex = (active - 1) * homesPerPage;
+  const endIndex = startIndex + homesPerPage;
   const currentHomes = filteredHomes.slice(startIndex, endIndex);
 
   const handleOpen = (value) => {
@@ -336,16 +341,27 @@ export default function TableWithStripedRows() {
               Trang <strong className="text-gray-900">{active}</strong> trên{" "}
               <strong className="text-gray-900">{totalPages}</strong>
             </Typography>
-            {/* <Button
-                size="sm"
-                variant="outlined"
-                onClick={prev}
-                disabled={active === 1}
-                className="flex gap-1 items-center border-gray-300"
-              >
-                <ChevronLeftIcon strokeWidth={3} className="h-3 w-3" />
-                Trước
-              </Button> */}
+            <Menu
+              animate={{
+                mount: { y: 0 },
+                unmount: { y: 25 },
+              }}
+            >
+              <MenuHandler>
+                <Button variant="outlined">{homesPerPage} hộ</Button>
+              </MenuHandler>
+              <MenuList>
+                <MenuItem onClick={() => setHomesPerPage(5)}>
+                  5 hộ
+                </MenuItem>
+                <MenuItem onClick={() => setHomesPerPage(10)}>
+                  10 hộ
+                </MenuItem>
+                <MenuItem onClick={() => setHomesPerPage(20)}>
+                  20 hộ
+                </MenuItem>
+              </MenuList>
+            </Menu>
             <div className="flex gap-4 items-center">
               <Button
                 size="sm"

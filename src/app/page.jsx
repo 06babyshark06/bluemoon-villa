@@ -46,7 +46,7 @@ const Page = () => {
             className="h-full w-full object-cover"
           />
         </Carousel>
-          <Button onClick={()=>{route.push("/login")}} className="absolute bottom-20">Get Started</Button>
+          <Button onClick={()=>{route.push("/login")}} className="absolute bottom-20">Khám phá</Button>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import {
   Card,
   CardBody,
@@ -19,7 +19,11 @@ function TeamCard({ img, name, title }) {
           size="xxl"
           className="mx-auto mb-6 object-top"
         />
-        <Typography variant="h5" color="blue-gray" className="!font-medium text-lg">
+        <Typography
+          variant="h5"
+          color="blue-gray"
+          className="!font-medium text-lg"
+        >
           {name}
         </Typography>
         <Typography
@@ -28,7 +32,7 @@ function TeamCard({ img, name, title }) {
         >
           {title}
         </Typography>
-        <div className="flex items-center justify-center gap-1.5">
+        {/* <div className="flex items-center justify-center gap-1.5">
           <IconButton variant="text" color="gray">
             <i className="fa-brands fa-twitter text-lg" />
           </IconButton>
@@ -38,48 +42,43 @@ function TeamCard({ img, name, title }) {
           <IconButton variant="text" color="gray">
             <i className="fa-brands fa-dribbble text-lg" />
           </IconButton>
-        </div>
+        </div> */}
       </CardBody>
     </Card>
   );
 }
 
-
 export function TeamSection12() {
   return (
     <section className="min-h-screen py-8 px-8 lg:py-28">
-    <div className="container mx-auto">
-      <div className="mb-16 text-center lg:mb-28">
-        <Typography
-          variant="h6"
-          color="blue-gray"
-          className="text-lg"
-        >
-          Meet the Team
-        </Typography>
-        <Typography
-          variant="h1"
-          color="blue-gray"
-          className="my-2 !text-2xl lg:!text-4xl"
-        >
-          Behind the Success: Our Dedicated Team
-        </Typography>
-        <Typography
-          variant="lead"
-          className="mx-auto w-full !text-gray-500 max-w-4xl"
-        >
-          From visionary leadership to creative talent, and technical wizards, 
-          each team member plays a pivotal role in delivering the exceptional 
-          service and innovative solutions.
-        </Typography>
+      <div className="container mx-auto">
+        <div className="mb-16 text-center lg:mb-28">
+          <Typography variant="h6" color="blue-gray" className="text-lg">
+            Gặp nhóm chúng tôi
+          </Typography>
+          <Typography
+            variant="h1"
+            color="blue-gray"
+            className="my-2 !text-2xl lg:!text-4xl"
+          >
+            Đằng sau sự thành công : Sự cố gắng của cả nhóm
+          </Typography>
+          <Typography
+            variant="lead"
+            className="mx-auto w-full !text-gray-500 max-w-4xl"
+          >
+            Từ lãnh đạo tầm nhìn đến tài năng sáng tạo và những kỹ thuật viên
+            tài năng, mỗi thành viên trong nhóm đều đóng vai trò then chốt trong
+            việc cung cấp dịch vụ xuất sắc và giải pháp sáng tạo.
+          </Typography>
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {members.map((props, key) => (
+            <TeamCard key={key} {...props} />
+          ))}
+        </div>
       </div>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {members.map((props, key) => (
-          <TeamCard key={key} {...props} />
-        ))}
-      </div>
-    </div>
-  </section>
+    </section>
   );
 }
 

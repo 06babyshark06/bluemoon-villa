@@ -20,6 +20,10 @@ import {
   IconButton,
   Tooltip,
   Input,
+  Menu,
+  MenuHandler,
+  MenuItem,
+  MenuList,
 } from "@material-tailwind/react";
 import { FaHandHoldingWater } from "react-icons/fa";
 import {
@@ -43,67 +47,38 @@ const TABLE_HEAD = [
   "",
 ];
 
-const TABLE_ROWS = [
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-spotify.svg",
-    name: "Tiền nước tháng 11",
-    amount: "999999999",
-    date: "2025 02 02 02 02 02 02",
-    status: "Đẫ hoàn thành",
-    account: "An",
-    accountNumber: "1234",
-    expiry: "Nhà 11",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-amazon.svg",
-    name: "Amazon",
-    amount: "$5,000",
-    date: "Wed 1:00pm",
-    status: "paid",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-pinterest.svg",
-    name: "Pinterest",
-    amount: "$3,400",
-    date: "Mon 7:40pm",
-    status: "pending",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-google.svg",
-    name: "Google",
-    amount: "$1,000",
-    date: "Wed 5:00pm",
-    status: "paid",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-];
-
 export default function TransactionsTable() {
   const [active, setActive] = React.useState(1);
   const [open, setOpen] = React.useState(0);
   const [payments, setPayments] = React.useState([]);
+  const [search, setSearch] = React.useState("");
+  const [paymentsPerPage, setPaymentsPerPage] = React.useState(5);
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
 
+  const searchedPayments =
+    search.length > 0
+      ? payments.filter(
+          ({ home, bill }, payAt) =>
+            home.members
+              .filter((member) => member.relationship === "Chủ hộ")[0]
+              .name.toLowerCase()
+              .includes(search.toLowerCase()) ||
+            bill.billName.toLowerCase().includes(search.toLowerCase()) ||
+            new Date(payAt)
+              .toLocaleString()
+              .toLowerCase()
+              .includes(search.toLowerCase()) ||
+            home.houseNumber.toString().includes(search) ||
+            bill.money.toString().includes(search)
+        )
+      : payments;
+  const totalPages = Math.ceil(searchedPayments.length / paymentsPerPage);
+  const startIndex = (active - 1) * paymentsPerPage;
+  const endIndex = startIndex + paymentsPerPage;
+  const currentPayments = searchedPayments.slice(startIndex, endIndex);
+
   const next = () => {
-    if (active === 10) return;
+    if (active === totalPages) return;
 
     setActive(active + 1);
   };
@@ -139,6 +114,7 @@ export default function TransactionsTable() {
               <Input
                 label="Tìm kiếm"
                 icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+                onChange={(e) => setSearch(e.target.value)}
               />
             </div>
             <Button className="flex items-center gap-3" size="sm">
@@ -169,7 +145,7 @@ export default function TransactionsTable() {
             </tr>
           </thead>
           <tbody>
-            {payments.map(
+            {currentPayments.map(
               (
                 {
                   id,
@@ -180,7 +156,7 @@ export default function TransactionsTable() {
                 },
                 index
               ) => {
-                const isLast = index === TABLE_ROWS.length - 1;
+                const isLast = index === payments.length - 1;
                 const classes = isLast
                   ? "p-4"
                   : "p-4 border-b border-blue-gray-50";
@@ -257,10 +233,8 @@ export default function TransactionsTable() {
                     </td>
                     <td className={classes}>
                       <div className="flex items-center gap-3">
-                        <div className="h-9 w-12 rounded-md border border-blue-gray-50 p-1">
-                          <div className="border border-gray-200 p-2.5 rounded-lg">
-                            <FcHome className="h-6 w-6 text-gray-900" />
-                          </div>
+                        <div className="h-12 w-12 rounded-md border border-blue-gray-50 p-1">
+                          <FcHome className="h-full w-full text-gray-900" />
                         </div>
                         <div className="flex flex-col">
                           <Typography
@@ -280,13 +254,13 @@ export default function TransactionsTable() {
                         </div>
                       </div>
                     </td>
-                    <td className={classes}>
+                    {/* <td className={classes}>
                       <Tooltip content="Thông tin chi tiết">
                         <IconButton variant="text">
                           <FcInfo className="h-6 w-6 text-gray-900" />
                         </IconButton>
                       </Tooltip>
-                    </td>
+                    </td> */}
                   </tr>
                 );
               }
@@ -299,8 +273,29 @@ export default function TransactionsTable() {
           <div className="flex items-center gap-8 justify-between">
             <Typography variant="small" className="font-bold text-gray-600">
               Trang <strong className="text-gray-900">{active}</strong> trên{" "}
-              <strong className="text-gray-900">10</strong>
+              <strong className="text-gray-900">{totalPages}</strong>
             </Typography>
+            <Menu
+              animate={{
+                mount: { y: 0 },
+                unmount: { y: 25 },
+              }}
+            >
+              <MenuHandler>
+                <Button variant="outlined">{paymentsPerPage} hóa đơn</Button>
+              </MenuHandler>
+              <MenuList>
+                <MenuItem onClick={() => setPaymentsPerPage(5)}>
+                  5 hóa đơn
+                </MenuItem>
+                <MenuItem onClick={() => setPaymentsPerPage(10)}>
+                  10 hóa đơn
+                </MenuItem>
+                <MenuItem onClick={() => setPaymentsPerPage(20)}>
+                  20 hóa đơn
+                </MenuItem>
+              </MenuList>
+            </Menu>
             <div className="flex gap-4 items-center">
               <Button
                 size="sm"

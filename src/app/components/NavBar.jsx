@@ -27,9 +27,9 @@ function NavItem({ label, to }) {
 function NavList() {
   return (
     <ul className="mb-4 mt-2 flex flex-col gap-3 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-8">
-      <NavItem label="About Us" to="about" />
-      <NavItem label="Pricing" to="pricing" />
-      <NavItem label="Contact Us" to="contact" />
+      <NavItem label="Về chúng tôi" to="about" />
+      <NavItem label="Mua ngay" to="pricing" />
+      <NavItem label="Liên hệ" to="contact" />
     </ul>
   );
 }
@@ -73,7 +73,7 @@ export function NavbarWithSimpleLinks() {
           {!session ? (
             <Link href="/login">
               <Button color="gray" className="hidden lg:inline-block">
-                Sign in
+                Đăng nhập
               </Button>
             </Link>
           ) : (
@@ -86,7 +86,7 @@ export function NavbarWithSimpleLinks() {
                 color="gray"
                 className="hidden lg:inline-block"
               >
-                Sign out
+                Đăng xuất
               </Button>
             </div>
           )}
@@ -111,7 +111,7 @@ export function NavbarWithSimpleLinks() {
             {!session ? (
               <Link href="/login">
                 <Button className="mb-2" fullWidth>
-                  Sign in
+                  Đăng nhập
                 </Button>
               </Link>
             ) : (
@@ -123,8 +123,8 @@ export function NavbarWithSimpleLinks() {
                 <Typography as="h1" color="blue" className="ml-1">
                   {session?.user.email}
                 </Typography>
-                <Button className="my-2" fullWidth>
-                  Sign out
+                <Button className="my-2" fullWidth onClick={handleSignout}>
+                  Đăng xuất
                 </Button>
               </>
             )}

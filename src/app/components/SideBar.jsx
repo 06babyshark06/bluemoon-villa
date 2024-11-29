@@ -17,6 +17,7 @@ import {
   UserGroupIcon,
   Square2StackIcon,
   RectangleGroupIcon,
+  HomeIcon,
   ChatBubbleLeftEllipsisIcon,
 } from "@heroicons/react/24/solid";
 import {
@@ -100,7 +101,7 @@ function SidebarLight() {
               <RectangleGroupIcon className="h-5 w-5" />
             </ListItemPrefix>
             <Typography className="mr-auto font-normal text-inherit">
-              Dashboard
+              Bảng điều khiển
             </Typography>
             <ChevronDownIcon
               strokeWidth={3}
@@ -138,7 +139,7 @@ function SidebarLight() {
         >
           <ListItem className={LIST_ITEM_STYLES}>
             <ListItemPrefix>
-              <Square2StackIcon className="h-5 w-5" />
+              <HomeIcon className="h-5 w-5" />
             </ListItemPrefix>
             Danh sách hộ gia đình
           </ListItem>

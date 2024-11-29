@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React from "react";
 import dynamic from "next/dynamic";
 
@@ -9,6 +9,11 @@ import {
   Typography,
   Button,
   CardFooter,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  Input,
+  DialogFooter,
 } from "@material-tailwind/react";
 
 // charts import
@@ -118,15 +123,84 @@ function AreaChart({ height = 350, series, colors, options }) {
 }
 
 export function ChartsExample5() {
+  const [payments, setPayments] = React.useState([]);
+  const [open, setOpen] = React.useState(0);
+  const handleOpen = (value) => setOpen(open === value ? 0 : value);
+  const water = payments.filter((payment) => payment.bill.type === "Tiền nước");
+  const electricity = payments.filter(
+    (payment) => payment.bill.type === "Tiền điện"
+  );
+  const network = payments.filter(
+    (payment) => payment.bill.type === "Tiền mạng"
+  );
+  const volunteer = payments.filter(
+    (payment) => payment.bill.type === "Tiền từ thiện"
+  );
+  const services = payments.filter(
+    (payment) => payment.bill.type === "Dịch vụ chung cư"
+  );
+  const management = payments.filter(
+    (payment) => payment.bill.type === "Quản lý chung cư"
+  );
+  const parking = payments.filter((payment) => payment.bill.type === "Gửi xe");
+  const months = [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+  ];
+  const countAnnual = (payments) => {
+    const data = months.map((month) => {
+      let count = 0;
+      payments.forEach((payment) => {
+        const date = new Date(payment.createdAt);
+        if (date.getMonth() === months.indexOf(month)) {
+          count += payment.bill.money;
+        }
+      });
+      return count;
+    });
+    return data;
+  };
+  const waterPayment = countAnnual(water);
+  const electricityPayment = countAnnual(electricity);
+  const networkPayment = countAnnual(network);
+  const volunteerPayment = countAnnual(volunteer);
+  const servicesPayment = countAnnual(services);
+  const managementPayment = countAnnual(management);
+  const parkingPayment = countAnnual(parking);
+  React.useEffect(() => {
+    const fetchPayments = async () => {
+      const response = await fetch("/api/payments");
+      const data = await response.json();
+      console.log(data);
+      setPayments(data);
+    };
+    fetchPayments();
+  }, []);
   return (
     <section className="m-[5rem] w-full">
       <Card className="mt-2">
         <CardBody className="!p-2">
           <div className="flex gap-2 flex-wrap justify-between px-4 !mt-4 ">
             <Typography variant="h3" color="blue-gray">
-              $127,092.22
+              $
+              {new Intl.NumberFormat("vi-VN").format(
+                payments.reduce(
+                  (total, payment) => total + payment.bill.money,
+                  0
+                )
+              )}
             </Typography>
-            <div className="flex items-center gap-6">
+            {/* <div className="flex items-center gap-6">
               <div className="flex items-center gap-1">
                 <span className="h-2 w-2 bg-blue-500 rounded-full"></span>
                 <Typography
@@ -145,11 +219,19 @@ export function ChartsExample5() {
                   2023
                 </Typography>
               </div>
-            </div>
+            </div> */}
           </div>
           {/** chart */}
           <AreaChart
-            colors={["#4CAF50", "#2196F3"]}
+            colors={[
+              "#4CAF50",
+              "#2196F3",
+              "#FF9800",
+              "#FFC107",
+              "#FF5722",
+              "#FFEB3B",
+              "#8BC34A",
+            ]}
             options={{
               xaxis: {
                 categories: [
@@ -170,16 +252,32 @@ export function ChartsExample5() {
             }}
             series={[
               {
-                name: "2022 Sales",
-                data: [
-                  0, 200, 180, 350, 500, 680, 800, 800, 880, 900, 680, 900,
-                ],
+                name: "Tiền nước",
+                data: waterPayment,
               },
               {
-                name: "2023 Sales",
-                data: [
-                  200, 160, 150, 260, 600, 790, 900, 660, 720, 800, 500, 800,
-                ],
+                name: "Tiền điện",
+                data: electricityPayment,
+              },
+              {
+                name: "Tiền mạng",
+                data: networkPayment,
+              },
+              {
+                name: "Tiền từ thiện",
+                data: volunteerPayment,
+              },
+              {
+                name: "Dịch vụ chung cư",
+                data: servicesPayment,
+              },
+              {
+                name: "Quản lý chung cư",
+                data: managementPayment,
+              },
+              {
+                name: "Gửi xe",
+                data: parkingPayment,
               },
             ]}
           />
@@ -187,18 +285,39 @@ export function ChartsExample5() {
         <CardFooter className="flex gap-6 flex-wrap items-center justify-between">
           <div>
             <Typography variant="h6" color="blue-gray">
-              Annual Sales Performance
+              Thống kê các khoản thu mỗi tháng
             </Typography>
             <Typography
               variant="small"
               className="font-normal text-gray-600 mt-1"
             >
-              Year-to-Date sales comparison
+              So sánh giữa các loại khoản thu
             </Typography>
           </div>
-          <Button variant="outlined">View report</Button>
+          <Button variant="outlined" onClick={() => handleOpen(1)}>
+            Báo cáo chi tiết
+          </Button>
         </CardFooter>
       </Card>
+      <Dialog open={open === 1} handler={handleOpen}>
+        <DialogHeader>Tổng số tiền hàng tháng</DialogHeader>
+        <DialogBody className="flex flex-col gap-4">
+          Dâng phát triển
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            variant="text"
+            color="red"
+            onClick={handleOpen}
+            className="mr-1"
+          >
+            <span>Hủy</span>
+          </Button>
+          <Button variant="gradient" color="green" onClick={handleOpen}>
+            <span>Xác nhận</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
     </section>
   );
 }

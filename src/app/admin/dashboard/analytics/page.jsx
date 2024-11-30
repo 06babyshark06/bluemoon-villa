@@ -121,7 +121,20 @@ function AreaChart({ height = 350, series, colors, options }) {
     <Chart type="area" height={height} series={series} options={chartOptions} />
   );
 }
-
+const months = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
+const countAnnual = (payments) => {
+  const data = months.map((month) => {
+    let count = 0;
+    payments.forEach((payment) => {
+      const date = new Date(payment.createdAt);
+      if (date.getMonth() === months.indexOf(month)) {
+        count += payment.bill.money;
+      }
+    });
+    return count;
+  });
+  return data;
+};
 export function ChartsExample5() {
   const [payments, setPayments] = React.useState([]);
   const [open, setOpen] = React.useState(0);
@@ -143,33 +156,7 @@ export function ChartsExample5() {
     (payment) => payment.bill.type === "Quản lý chung cư"
   );
   const parking = payments.filter((payment) => payment.bill.type === "Gửi xe");
-  const months = [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-  ];
-  const countAnnual = (payments) => {
-    const data = months.map((month) => {
-      let count = 0;
-      payments.forEach((payment) => {
-        const date = new Date(payment.createdAt);
-        if (date.getMonth() === months.indexOf(month)) {
-          count += payment.bill.money;
-        }
-      });
-      return count;
-    });
-    return data;
-  };
+
   const waterPayment = countAnnual(water);
   const electricityPayment = countAnnual(electricity);
   const networkPayment = countAnnual(network);
@@ -181,24 +168,86 @@ export function ChartsExample5() {
     const fetchPayments = async () => {
       const response = await fetch("/api/payments");
       const data = await response.json();
-      console.log(data);
       setPayments(data);
     };
     fetchPayments();
   }, []);
+  const chartOptions = React.useMemo(() => {
+    return (
+      {
+        xaxis: {
+          categories: [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ],
+        },
+      },
+      [months]
+    );
+  });
+  const currentSeries = React.useMemo(() => {
+    return [
+      {
+        name: "Tiền nước",
+        data: waterPayment,
+      },
+      {
+        name: "Tiền điện",
+        data: electricityPayment,
+      },
+      {
+        name: "Tiền mạng",
+        data: networkPayment,
+      },
+      {
+        name: "Tiền từ thiện",
+        data: volunteerPayment,
+      },
+      {
+        name: "Dịch vụ chung cư",
+        data: servicesPayment,
+      },
+      {
+        name: "Quản lý chung cư",
+        data: managementPayment,
+      },
+      {
+        name: "Gửi xe",
+        data: parkingPayment,
+      },
+    ];
+  }, [
+    waterPayment,
+    electricityPayment,
+    networkPayment,
+    volunteerPayment,
+    servicesPayment,
+    managementPayment,
+    parkingPayment,
+  ]);
   return (
     <section className="m-[5rem] w-full">
       <Card className="mt-2">
         <CardBody className="!p-2">
           <div className="flex gap-2 flex-wrap justify-between px-4 !mt-4 ">
             <Typography variant="h3" color="blue-gray">
-              $
               {new Intl.NumberFormat("vi-VN").format(
                 payments.reduce(
                   (total, payment) => total + payment.bill.money,
                   0
                 )
-              )}
+              )}{" "}
+              VND
             </Typography>
             {/* <div className="flex items-center gap-6">
               <div className="flex items-center gap-1">
@@ -232,54 +281,8 @@ export function ChartsExample5() {
               "#FFEB3B",
               "#8BC34A",
             ]}
-            options={{
-              xaxis: {
-                categories: [
-                  "Jan",
-                  "Feb",
-                  "Mar",
-                  "Apr",
-                  "May",
-                  "Jun",
-                  "Jul",
-                  "Aug",
-                  "Sep",
-                  "Oct",
-                  "Nov",
-                  "Dec",
-                ],
-              },
-            }}
-            series={[
-              {
-                name: "Tiền nước",
-                data: waterPayment,
-              },
-              {
-                name: "Tiền điện",
-                data: electricityPayment,
-              },
-              {
-                name: "Tiền mạng",
-                data: networkPayment,
-              },
-              {
-                name: "Tiền từ thiện",
-                data: volunteerPayment,
-              },
-              {
-                name: "Dịch vụ chung cư",
-                data: servicesPayment,
-              },
-              {
-                name: "Quản lý chung cư",
-                data: managementPayment,
-              },
-              {
-                name: "Gửi xe",
-                data: parkingPayment,
-              },
-            ]}
+            options={chartOptions}
+            series={currentSeries}
           />
         </CardBody>
         <CardFooter className="flex gap-6 flex-wrap items-center justify-between">
@@ -301,9 +304,7 @@ export function ChartsExample5() {
       </Card>
       <Dialog open={open === 1} handler={handleOpen}>
         <DialogHeader>Tổng số tiền hàng tháng</DialogHeader>
-        <DialogBody className="flex flex-col gap-4">
-          Dâng phát triển
-        </DialogBody>
+        <DialogBody className="flex flex-col gap-4">Dâng phát triển</DialogBody>
         <DialogFooter>
           <Button
             variant="text"

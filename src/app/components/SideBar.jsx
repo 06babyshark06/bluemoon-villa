@@ -81,11 +81,11 @@ function SidebarLight() {
                   Thông tin
                 </ListItem>
               </Link>
-              {/* <Link href="/admin/settings">
+              <Link href="/admin/map">
                 <ListItem className={`px-16 ${LIST_ITEM_STYLES}`}>
-                  Settings
+                  Map
                 </ListItem>
-              </Link> */}
+              </Link>
             </List>
           </AccordionBody>
         </Accordion>

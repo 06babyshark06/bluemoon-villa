@@ -7,11 +7,11 @@ export async function hashPassword(password) {
   return await bcrypt.hash(password, salt);
 }
 export const POST = async (request) => {
-  const { email, password, confirmPassword } = await request.json();
+  const { email, password } = await request.json();
   const user = await prisma.admin.findUnique({
     where: { email: email },
   });
-  if (user) return new NextResponse(JSON.stringify({ error: "user already exists" }), { status: 400 });
+  if (user) return new NextResponse(JSON.stringify({ error: "Tài khoản đã tồn tại" }), { status: 400 });
   const hashedPassword = await hashPassword(password);
   await prisma.admin.create({
     data: {
@@ -19,5 +19,5 @@ export const POST = async (request) => {
       password: hashedPassword,
     },
   });
-  return new NextResponse(JSON.stringify({ success: "user created successfully" }), { status: 200 });
+  return new NextResponse(JSON.stringify({ success: "Tạo tài khoản thành công" }), { status: 200 });
 };

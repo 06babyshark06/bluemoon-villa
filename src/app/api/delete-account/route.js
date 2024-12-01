@@ -11,5 +11,5 @@ export const POST = async (req, res) => {
     where: { id: id },
   });
 
-  return new NextResponse(JSON.stringify({ success: "Password updated successfully" }), { status: 200 });
+  return new NextResponse(JSON.stringify({ success: "Đã xóa tài khoản" }), { status: 200 });
 }

@@ -22,7 +22,7 @@ const Contact = () => {
       <Card className="w-[30rem] p-9 bg-blue-gray-100 ">
         <CardHeader color="" className="flex justify-center items-center mt-1">
           <Typography variant="h1" color="blue" className="my-3">
-            Our director
+            Người quản lý dự án
           </Typography>
         </CardHeader>
         <CardBody>
@@ -30,22 +30,21 @@ const Contact = () => {
             Trần Đức An
           </Typography>
           <Typography variant="p" color="blue-gray" className="my-3">
-            I am a full stack developer, data engineer. I make this website and
-            I am admin too.
+            20224912 Hanoi University of Science and Technology k67 - IT1-05
           </Typography>
           <Typography variant="p" color="blue-gray" className="my-3">
-            This is our repository : <a className="text-blue-600" href="https://github.com/06babyshark06/bluemoon-villa">Bluemoon-villa</a>
+            Respository trên github: <a className="text-blue-600" href="https://github.com/06babyshark06/bluemoon-villa">Bluemoon-villa</a>
           </Typography>
           <Typography variant="p" color="blue-gray" className="my-3">
-            Phone number : 0392225886
+            Số điện thoại : 0392225886
           </Typography>
           <Typography variant="p" color="blue-gray" className="my-3">
-            Tutorial: <a className="text-blue-600" href="https://www.youtube.com/watch?v=PQVbPqLg2zU">https://www.youtube.com/watch?v=PQVbPqLg2zU</a>
+            Video hướng dẫn : <a className="text-blue-600" href="https://www.youtube.com/watch?v=PQVbPqLg2zU">https://www.youtube.com/watch?v=PQVbPqLg2zU</a>
           </Typography>
         </CardBody>
         <CardFooter className="pt-0 w-full">
           <Link href="/">
-            <Button className="w-full bg-white text-blue-500">Back to home</Button>
+            <Button className="w-full bg-white text-blue-500">Quay lại trang chủ</Button>
           </Link>
         </CardFooter>
       </Card>

@@ -40,7 +40,6 @@ import { HiCheck } from "react-icons/hi";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { services } from "@/app/utils/services";
 import { toast } from "react-toastify";
-import { da } from "date-fns/locale";
 import { type } from "@/app/utils/type";
 
 function BillingCard({
@@ -222,7 +221,6 @@ function Billing3() {
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
   const addNewPayment = async (e) => {
     e.preventDefault();
-    console.log(e);
     const houseNumber = e.target[0].value;
     const billName = e.target[1].value;
     const type = chosenService;
@@ -239,7 +237,6 @@ function Billing3() {
       body: JSON.stringify({ houseNumber, billName, type, money, consumption }),
     });
     const data = await response.json();
-    console.log(data);
     if (data.error) {
       setError(data.error);
     } else {
@@ -265,7 +262,6 @@ function Billing3() {
         body: JSON.stringify({ billName, type, money }),
       });
       const data = await response.json();
-      console.log(data);
       if (data.error) {
         setError(data.error);
       } else {
@@ -286,7 +282,6 @@ function Billing3() {
         body: JSON.stringify({ billName, type, money }),
       });
       const data = await response.json();
-      console.log(data);
       if (data.error) {
         setError(data.error);
       } else {
@@ -308,7 +303,6 @@ function Billing3() {
         body: JSON.stringify({ billName, type, cars, bikes }),
       });
       const data = await response.json();
-      console.log(data);
       if (data.error) {
         setError(data.error);
       } else {
@@ -411,7 +405,6 @@ function Billing3() {
     const fetchPayments = async () => {
       const response = await fetch("/api/payments");
       const data = await response.json();
-      console.log(data);
       setPayments(data.filter(payment=>!payment.paid));
     };
     fetchPayments();

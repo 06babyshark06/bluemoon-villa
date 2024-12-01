@@ -32,7 +32,6 @@ export const PUT = async (req, { params }) => {
 export const DELETE = async (req, { params }) => {
   const { id } = params;
   const newId = parseInt(id, 10);
-  console.log(newId);
   const members = await prisma.member.deleteMany({ where: { homeId: newId } });
   const payments = await prisma.payment.deleteMany({ where: { homeId: newId } });
   const home = await prisma.home.delete({ where: { id: newId } });

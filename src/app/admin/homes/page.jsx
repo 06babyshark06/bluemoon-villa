@@ -28,7 +28,6 @@ const TABLE_HEAD = [
   "Trạng thái",
   "",
 ];
-const membersPerPage = 5;
 const statusLiving = "Đang sinh sống";
 const statusMoved = "Đã chuyển đi";
 
@@ -102,7 +101,6 @@ export default function TableWithStripedRows() {
       body: JSON.stringify({ owner, size, houseNumber, cars, bikes }),
     });
     const data = await response.json();
-    console.log(data);
     if (data.error) {
       setError(data.error);
     } else {
@@ -113,7 +111,6 @@ export default function TableWithStripedRows() {
 
   const handleEditHome = (id) => {
     const home = homes.find((home) => home.id === id);
-    console.log(home);
     handleOpen(2);
     setOwner(
       home.members.find((member) => member.relationship === "Chủ hộ").name
@@ -123,7 +120,6 @@ export default function TableWithStripedRows() {
     setCars(home.cars);
     setBikes(home.bikes);
     setId(id);
-    console.log(id);
   };
 
   const updateHome = async (e) => {
@@ -140,7 +136,6 @@ export default function TableWithStripedRows() {
       body: JSON.stringify({ size, cars, bikes }),
     });
     const data = await response.json();
-    console.log(data);
     if (data.error) {
       setError(data.error);
     } else {
@@ -158,7 +153,6 @@ export default function TableWithStripedRows() {
       body: JSON.stringify({ isLiving: false }),
     });
     const data = await response.json();
-    console.log(data);
     if (data.error) {
       setError(data.error);
     } else {
@@ -167,12 +161,10 @@ export default function TableWithStripedRows() {
     handleOpen(0);
   };
   const handleDeleteHome = async () => {
-    console.log(id);
     const response = await fetch(`/api/homes/${id}`, {
       method: "DELETE",
     });
     const data = await response.json();
-    console.log(data);
     if (data.error) {
       toast.error(data.error);
     } else {
@@ -191,7 +183,6 @@ export default function TableWithStripedRows() {
     const fetchHomes = async () => {
       const response = await fetch("/api/homes");
       const data = await response.json();
-      console.log(data);
       setHomes(data);
     };
     fetchHomes();

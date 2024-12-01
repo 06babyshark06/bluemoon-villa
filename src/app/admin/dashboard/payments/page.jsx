@@ -37,6 +37,8 @@ import {
 } from "react-icons/fc";
 import React from "react";
 import { TbParkingCircleFilled } from "react-icons/tb";
+import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
 
 const TABLE_HEAD = [
   "Tên khoản thu",
@@ -46,6 +48,24 @@ const TABLE_HEAD = [
   "Hộ gia đình",
   "",
 ];
+function flattenJSON(data) {
+  const result = data.map((item) => {
+    const flatItem = {};
+    const flatten = (obj, parentKey = "") => {
+      Object.keys(obj).forEach((key) => {
+        const newKey = parentKey ? `${parentKey}.${key}` : key;
+        if (typeof obj[key] === "object" && obj[key] !== null) {
+          flatten(obj[key], newKey);
+        } else {
+          flatItem[newKey] = obj[key];
+        }
+      });
+    };
+    flatten(item);
+    return flatItem;
+  });
+  return result;
+}
 
 export default function TransactionsTable() {
   const [active, setActive] = React.useState(1);
@@ -76,6 +96,45 @@ export default function TransactionsTable() {
   const startIndex = (active - 1) * paymentsPerPage;
   const endIndex = startIndex + paymentsPerPage;
   const currentPayments = searchedPayments.slice(startIndex, endIndex);
+  const downloadPayments = async () => {
+    const flatData = flattenJSON(searchedPayments);
+    console.log(flatData);
+    try {
+      // Tạo workbook và worksheet
+      const worksheet = XLSX.utils.json_to_sheet(flatData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+      const excelBlob = new Blob(
+        [XLSX.write(workbook, { bookType: "xlsx", type: "array" })],
+        {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        }
+      );
+
+      // Yêu cầu người dùng chọn nơi lưu file
+      const fileHandle = await window.showSaveFilePicker({
+        suggestedName: "ExportedData.xlsx",
+        types: [
+          {
+            description: "Excel Files",
+            accept: {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                [".xlsx"],
+            },
+          },
+        ],
+      });
+
+      // Ghi file vào đường dẫn được chọn
+      const writableStream = await fileHandle.createWritable();
+      await writableStream.write(excelBlob);
+      await writableStream.close();
+
+      toast.success("Tải xuống file thanh cong");
+    } catch (error) {
+      toast.error("Tải xuống file that bai");
+    }
+  };
 
   const next = () => {
     if (active === totalPages) return;
@@ -92,7 +151,6 @@ export default function TransactionsTable() {
     const fetchPayments = async () => {
       const response = await fetch("/api/payments");
       const data = await response.json();
-      console.log(data);
       setPayments(data.filter((payment) => payment.paid));
     };
     fetchPayments();
@@ -117,7 +175,11 @@ export default function TransactionsTable() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            <Button className="flex items-center gap-3" size="sm">
+            <Button
+              className="flex items-center gap-3"
+              size="sm"
+              onClick={() => downloadPayments()}
+            >
               <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4" /> Tải
               xuống
             </Button>

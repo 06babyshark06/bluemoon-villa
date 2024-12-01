@@ -6,21 +6,71 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
+import { Button, Typography } from "@material-tailwind/react";
 
 var redIcon = L.icon({
-  iconUrl: '/marker.png',
-  iconSize:     [38, 70], // size of the icon
-  shadowSize:   [50, 64], // size of the shadow
-  iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-  shadowAnchor: [4, 62],  // the same for the shadow
-  popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+  iconUrl: "/marker.png",
+  iconSize: [38, 70], // size of the icon
+  shadowSize: [50, 64], // size of the shadow
+  iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+  shadowAnchor: [4, 62], // the same for the shadow
+  popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
 });
+const calculateDistance = (position1, position2) => {
+  const dx = position1.lat - position2.lat;
+  const dy = position1.lng - position2.lng;
+  return Math.sqrt(dx * dx + dy * dy);
+};
+const calculateCost = (path, positions) => {
+  let totalCost = 0;
+  // Tính tổng chi phí từ các thành phố trong chu trình
+  for (let i = 0; i < path.length - 1; i++) {
+    totalCost += calculateDistance(positions[path[i]], positions[path[i + 1]]);
+  }
+  // Thêm chi phí từ thành phố cuối quay lại thành phố đầu
+  totalCost += calculateDistance(
+    positions[path[path.length - 1]],
+    positions[path[0]]
+  );
+  return totalCost;
+};
+const generatePermutations = (array) => {
+  if (array.length === 0) return [[]];
+  const result = [];
+  for (let i = 0; i < array.length; i++) {
+    const current = array[i];
+    const remaining = array.slice(0, i).concat(array.slice(i + 1));
+    for (let perm of generatePermutations(remaining)) {
+      result.push([current, ...perm]);
+    }
+  }
+  return result;
+};
+const travelingSalesmanBruteForce = (positions) => {
+  const n = positions.length;
+  const cityIndices = Array.from({ length: n }, (_, i) => i); // Các chỉ số của các thành phố
+  const permutations = generatePermutations(cityIndices.slice(1)); // Liệt kê tất cả hoán vị các thành phố trừ thành phố xuất phát (0)
 
+  let minCost = Infinity;
+  let bestPath = [];
+
+  // Duyệt qua tất cả các hoán vị để tính tổng chi phí
+  for (let path of permutations) {
+    const cost = calculateCost([0, ...path], positions); // Thêm thành phố xuất phát (0) vào đầu chuỗi
+    if (cost < minCost) {
+      minCost = cost;
+      bestPath = [0, ...path]; // Lưu lại chu trình tốt nhất
+    }
+  }
+
+  return { minCost, bestPath };
+};
 const Map = () => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [markers, setMarkers] = useState([]);
   const [route, setRoute] = useState([]);
+  const [minCost, setMinCost] = useState(0);
   const center = { lng: 105.853333, lat: 21.028333 };
   const [zoom] = useState(16);
 
@@ -45,10 +95,14 @@ const Map = () => {
   }, [center.lng, center.lat, zoom]);
   const calculateTSP = () => {
     if (markers.length < 2) return;
-
+    const { minCost, bestPath } = travelingSalesmanBruteForce(markers);
+    console.log(bestPath);
     // Placeholder TSP: just draw a path connecting markers in order
-    const newRoute = markers.map((marker) => L.latLng(marker.lat, marker.lng));
+    const newRoute = bestPath.map((position) =>
+      L.latLng(markers[position].lat, markers[position].lng)
+    );
     setRoute(newRoute);
+    setMinCost(minCost);
   };
   const clearMap = () => {
     setMarkers([]);
@@ -66,7 +120,7 @@ const Map = () => {
 
     // Add new markers
     markers.forEach((marker) => {
-      L.marker([marker.lat, marker.lng],{icon: redIcon}).addTo(map.current);
+      L.marker([marker.lat, marker.lng], { icon: redIcon }).addTo(map.current);
     });
 
     // Add route if available
@@ -79,20 +133,27 @@ const Map = () => {
 
   return (
     <div className="w-full h-full mt-10 pt-10">
-      <div ref={mapContainer} className="w-full h-5/6" />
+      <div ref={mapContainer} className="w-full h-full" />
       <div className="mt-4 flex gap-4">
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        <Button
+          variant="outlined"
+          color="blue"
+          size="large"
+          // className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           onClick={calculateTSP}
         >
           Tính lộ trình
-        </button>
-        <button
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+        </Button>
+        <Button
+          variant="outlined"
+          color="red"
+          size="large"
+          // className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
           onClick={clearMap}
         >
           Xóa tất cả
-        </button>
+        </Button>
+        <Typography>Tổng quãng đường: {minCost*111.32} km</Typography>
       </div>
     </div>
   );

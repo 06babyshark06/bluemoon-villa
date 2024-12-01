@@ -9,8 +9,6 @@ export const POST = async (req, res) => {
   const profile = await prisma.profile.findUnique({
     where: { adminId: id },
   });
-  console.log(firstName, lastName, location);
-  console.log(profile);
   if (profile) {
     await prisma.profile.update({
       where: { adminId: id },
@@ -25,7 +23,7 @@ export const POST = async (req, res) => {
       },
     });
     return new NextResponse(
-      JSON.stringify({ success: "Profile updated successfully" }),
+      JSON.stringify({ success: "Cập nhật thành công hồ sơ" }),
       { status: 200 }
     );
   } else {
@@ -41,7 +39,7 @@ export const POST = async (req, res) => {
       },
     });
     return new NextResponse(
-      JSON.stringify({ success: "Profile created successfully" }),
+      JSON.stringify({ success: "Tạo mới hồ sơ thành công" }),
       { status: 200 }
     );
   }

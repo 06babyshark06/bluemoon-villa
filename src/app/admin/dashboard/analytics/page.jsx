@@ -23,6 +23,8 @@ const Chart = dynamic(() => import("react-apexcharts"), {
 
 // deepmerge
 import merge from "deepmerge";
+import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
 
 function AreaChart({ height = 350, series, colors, options }) {
   const chartOptions = React.useMemo(
@@ -164,6 +166,78 @@ export function ChartsExample5() {
   const servicesPayment = countAnnual(services);
   const managementPayment = countAnnual(management);
   const parkingPayment = countAnnual(parking);
+
+  const createReport = (payments, bills) => {
+    const workbook = XLSX.utils.book_new();
+    for (let i = 0; i < payments.length; i++) {
+      let sheet = {};
+      for (let payment of payments) {
+        for (let j = 0; j < payment.length; j++) {
+          sheet[`${bills[i]} tháng ${j + 1}`] = payment[j];
+        }
+      }
+      console.log(sheet);
+      const worksheet = XLSX.utils.json_to_sheet([sheet]);
+      XLSX.utils.book_append_sheet(workbook, worksheet, `${bills[i]}`);
+    }
+    return workbook;
+  };
+
+  const downloadReport = async () => {
+    try {
+      const workbook = createReport(
+        [
+          waterPayment,
+          electricityPayment,
+          networkPayment,
+          volunteerPayment,
+          servicesPayment,
+          managementPayment,
+          parkingPayment,
+        ],
+        [
+          "Tiền nước",
+          "Tiền điện",
+          "Tiền mạng",
+          "Tiền từ thiện",
+          "Dịch vụ chung cư",
+          "Quản lý chung cư",
+          "Gửi xe",
+        ]
+      );
+      const excelBlob = new Blob(
+        [XLSX.write(workbook, { bookType: "xlsx", type: "array" })],
+        {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        }
+      );
+
+      // Yêu cầu người dùng chọn nơi lưu file
+      const fileHandle = await window.showSaveFilePicker({
+        suggestedName: "ExportedData.xlsx",
+        types: [
+          {
+            description: "Excel Files",
+            accept: {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                [".xlsx"],
+            },
+          },
+        ],
+      });
+
+      // Ghi file vào đường dẫn được chọn
+      const writableStream = await fileHandle.createWritable();
+      await writableStream.write(excelBlob);
+      await writableStream.close();
+
+      toast.success("Tải xuống file thanh cong");
+    } catch (error) {
+      console.log(error.message);
+      toast.error("Tải xuống file that bai");
+    }
+  };
+
   React.useEffect(() => {
     const fetchPayments = async () => {
       const response = await fetch("/api/payments");
@@ -249,28 +323,7 @@ export function ChartsExample5() {
               )}{" "}
               VND
             </Typography>
-            {/* <div className="flex items-center gap-6">
-              <div className="flex items-center gap-1">
-                <span className="h-2 w-2 bg-blue-500 rounded-full"></span>
-                <Typography
-                  variant="small"
-                  className="font-normal text-gray-600"
-                >
-                  2022
-                </Typography>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="h-2 w-2 bg-green-500 rounded-full"></span>
-                <Typography
-                  variant="small"
-                  className="font-normal text-gray-600"
-                >
-                  2023
-                </Typography>
-              </div>
-            </div> */}
           </div>
-          {/** chart */}
           <AreaChart
             colors={[
               "#4CAF50",
@@ -297,7 +350,7 @@ export function ChartsExample5() {
               So sánh giữa các loại khoản thu
             </Typography>
           </div>
-          <Button variant="outlined" onClick={() => handleOpen(1)}>
+          <Button variant="outlined" onClick={() => downloadReport()}>
             Báo cáo chi tiết
           </Button>
         </CardFooter>

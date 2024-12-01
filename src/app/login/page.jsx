@@ -28,7 +28,7 @@ function Login() {
     const email = e.target[0].value;
     const password = e.target[1].value;
     if (!email || !password) {
-      toast.error("Please fill all the fields");
+      toast.error("Hãy điền đủ tất cả thông tin");
       return;
     }
     const response = await signIn("credentials", {
@@ -40,9 +40,9 @@ function Login() {
       if (response?.url) {
         router.replace("/admin/profile");
       }
-      toast.error("Invalid credentials");
+      toast.error("Hãy xem quá trình đăng nhập");
     } else {
-      toast.success("Login successful");
+      toast.success("Đăng nhập thành công");
     }
   };
   return (
@@ -59,11 +59,11 @@ function Login() {
                 color="blue-gray"
                 className="mb-4 !text-3xl lg:text-4xl"
               >
-                Login
+                Đăng nhập
               </Typography>
               <Typography className="!text-gray-600 text-[18px] font-normal md:max-w-sm">
-                Welcome back, Master.
-                <br /> We have been waiting for you.
+                Hãy đăng nhập để sử dụng toàn bộ tính năng 
+                <br /> Tài khoản cần được cấp bởi admin
               </Typography>
             </CardHeader>
             <CardBody>
@@ -77,7 +77,7 @@ function Login() {
                   size="lg"
                   type="email"
                   name="email"
-                  label="Your Email"
+                  label="Email"
                   className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
                 />
                 <Input
@@ -86,20 +86,20 @@ function Login() {
                   size="lg"
                   type="password"
                   name="password"
-                  label="Password"
+                  label="Mật khẩu"
                   className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
                 />
                 <Button type="submit" size="lg" color="gray" fullWidth>
-                  continue
+                  Tiếp tục
                 </Button>
 
                 <Typography
                   variant="small"
                   className="text-center mx-auto max-w-[19rem] !font-medium !text-gray-600"
                 >
-                  Sign in to create a new admin account <br />
+                  Đăng nhập để tạo tài khoản mới <br />
                   <Link href="/" className="text-black">
-                    Back to home
+                    Quay lại trang chủ
                   </Link>
                 </Typography>
               </form>

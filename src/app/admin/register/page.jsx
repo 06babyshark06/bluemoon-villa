@@ -30,7 +30,7 @@ function Register() {
     const password = e.target[1].value;
     const confirmPassword = e.target[2].value;
     if (!email || !password || !confirmPassword) {
-      toast.error("Please fill all the fields");
+      toast.error("Hãy điền đầy đủ thông tin");
       return;
     }
     if (password === confirmPassword) {
@@ -45,11 +45,13 @@ function Register() {
       if (data.error) {
         toast.error(data.error);
       } else {
-        toast.success("User registered successfully");
+        toast.success("Đã tạo thành công tài khoản mới");
       }
+    } else {
+      toast.error("Mật khảu xác nhận chưa đúng");
     }
   }
-  if (session==='loading') return <h1>Loading...</h1>
+  if (session==='loading') return <h1>Chờ một chút...</h1>
   return (
     <section className="w-full h-screen flex justify-center items-center px-8">
       <div className="container mx-auto h-screen grid place-items-center">
@@ -63,10 +65,10 @@ function Register() {
               color="blue-gray"
               className="mb-4 !text-3xl lg:text-4xl"
             >
-              Register
+              Đăng ký tài khoản mới
             </Typography>
             <Typography className="!text-gray-600 text-[18px] font-normal md:max-w-sm">
-              Trial to be our admins for 1 days
+              Chức năng chỉ được thực hiện bởi tài khoản admin.
             </Typography>
           </CardHeader>
           <CardBody>
@@ -77,7 +79,7 @@ function Register() {
                 size="lg"
                 type="email"
                 name="email"
-                label="Your Email"
+                label="Địa chỉ email"
                 className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
               />
               <Input
@@ -86,7 +88,7 @@ function Register() {
                 size="lg"
                 type="password"
                 name="password"
-                label="Password"
+                label="Mật khẩu"
                 className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
               />
               <Input
@@ -95,17 +97,17 @@ function Register() {
                 size="lg"
                 type="password"
                 name="confirm-password"
-                label="Confirm your Password"
+                label="Xác nhận mật khẩu"
                 className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
               />
               <Button size="lg" color="gray" fullWidth type="submit">
-                continue
+                Tiếp tục
               </Button>
               <Typography
                 variant="small"
                 className="text-center mx-auto max-w-[19rem] !font-medium !text-gray-600"
               >
-                Already has an account? {" "}<Link href="/login" className="text-black">Sign In</Link>
+                Đã có tài khoản rồi {" "}<Link href="/login" className="text-black">Đăng nhập</Link>
               </Typography>
             </form>
           </CardBody>

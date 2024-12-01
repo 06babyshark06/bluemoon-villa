@@ -11,8 +11,8 @@ export const authOptions = {
     CredentialsProvider({
         name: 'Credentials',
         credentials: {
-          username: { label: "Username", type: "text", placeholder: "jsmith" },
-          password: { label: "Password", type: "password" }
+          username: { label: "Email", type: "text", placeholder: "jsmith" },
+          password: { label: "Mật khẩu", type: "password" }
         },
         async authorize(credentials, req) {
           const user = await prisma.admin.findUnique({

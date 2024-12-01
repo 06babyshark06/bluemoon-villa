@@ -116,7 +116,6 @@ export default function TableWithStripedRows() {
       body: JSON.stringify({ name, relationship, houseNumber }),
     });
     const data = await response.json();
-    // console.log(data);
     if (data.error) {
       setError(data.error);
       return;
@@ -153,7 +152,6 @@ export default function TableWithStripedRows() {
       body: JSON.stringify({ name, relationship, houseNumber }),
     });
     const data = await response.json();
-    console.log(data);
     if (data.error) {
       setError(data.error);
     } else {
@@ -181,7 +179,6 @@ export default function TableWithStripedRows() {
       }),
     });
     const data = await response.json();
-    console.log(data);
     if (data.error) {
       setError(data.error);
     } else {
@@ -208,7 +205,6 @@ export default function TableWithStripedRows() {
     const fetchMembers = async () => {
       const response = await fetch("/api/members");
       const data = await response.json();
-      console.log(data);
       setMembers(data);
     };
     fetchMembers();

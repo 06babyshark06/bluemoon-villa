@@ -12,13 +12,13 @@ export const POST = async (req, res) => {
   });
 
   if (!user) {
-    return new NextResponse(JSON.stringify({error:"User not found"}), { status: 404 });
+    return new NextResponse(JSON.stringify({error:"Không tìm thấy tài khoản"}), { status: 404 });
   }
 
   // Check if the current password matches
   const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password);
   if (!isPasswordCorrect) {
-    return new NextResponse(JSON.stringify({error:"Current password is incorrect"}), { status: 400 });
+    return new NextResponse(JSON.stringify({error:"Mật khẩu hiện tại không đúng"}), { status: 400 });
   }
 
   // Hash the new password
@@ -31,5 +31,5 @@ export const POST = async (req, res) => {
     data: { password: hashedPassword },
   });
 
-  return new NextResponse(JSON.stringify({ success: "Password updated successfully" }), { status: 200 });
+  return new NextResponse(JSON.stringify({ success: "Cập nhật mật khẩu thành công" }), { status: 200 });
 }

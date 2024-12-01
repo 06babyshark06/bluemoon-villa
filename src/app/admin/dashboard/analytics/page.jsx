@@ -171,11 +171,9 @@ export function ChartsExample5() {
     const workbook = XLSX.utils.book_new();
     for (let i = 0; i < payments.length; i++) {
       let sheet = {};
-      for (let payment of payments) {
-        for (let j = 0; j < payment.length; j++) {
-          sheet[`${bills[i]} tháng ${j + 1}`] = payment[j];
+        for (let j = 0; j < payments[i].length; j++) {
+          sheet[`${bills[i]} tháng ${j + 1}`] = payments[i][j];
         }
-      }
       console.log(sheet);
       const worksheet = XLSX.utils.json_to_sheet([sheet]);
       XLSX.utils.book_append_sheet(workbook, worksheet, `${bills[i]}`);

@@ -48,21 +48,15 @@ const TABLE_HEAD = [
   "Hộ gia đình",
   "",
 ];
-function flattenJSON(data) {
+function cleanJSON(data) {
   const result = data.map((item) => {
-    const flatItem = {};
-    const flatten = (obj, parentKey = "") => {
-      Object.keys(obj).forEach((key) => {
-        const newKey = parentKey ? `${parentKey}.${key}` : key;
-        if (typeof obj[key] === "object" && obj[key] !== null) {
-          flatten(obj[key], newKey);
-        } else {
-          flatItem[newKey] = obj[key];
-        }
-      });
-    };
-    flatten(item);
-    return flatItem;
+    const cleanedItem = {};
+    cleanedItem["Khoản thu"] = item.bill.billName;
+    cleanedItem["Số tiền"] = item.bill.money;
+    cleanedItem["Ngày thanh toán"]=new Date(item.payAt).toLocaleString();
+    cleanedItem["Chủ hộ"] = item.home.members[0].name;
+    cleanedItem["Số nhà"] = item.home.houseNumber;
+    return cleanedItem;
   });
   return result;
 }
@@ -97,11 +91,11 @@ export default function TransactionsTable() {
   const endIndex = startIndex + paymentsPerPage;
   const currentPayments = searchedPayments.slice(startIndex, endIndex);
   const downloadPayments = async () => {
-    const flatData = flattenJSON(searchedPayments);
-    console.log(flatData);
+    const cleanedData = cleanJSON(searchedPayments);
+    console.log(cleanedData);
     try {
       // Tạo workbook và worksheet
-      const worksheet = XLSX.utils.json_to_sheet(flatData);
+      const worksheet = XLSX.utils.json_to_sheet(cleanedData);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
       const excelBlob = new Blob(

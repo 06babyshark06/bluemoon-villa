@@ -168,16 +168,47 @@ export function ChartsExample5() {
   const parkingPayment = countAnnual(parking);
 
   const createReport = (payments, bills) => {
+    // const workbook = XLSX.utils.book_new();
+    // for (let i = 0; i < payments.length; i++) {
+    //   let sheet = {};
+    //     for (let j = 0; j < payments[i].length; j++) {
+    //       sheet[`${bills[i]} tháng ${j + 1}`] = payments[i][j];
+    //     }
+    //   console.log(sheet);
+    //   const worksheet = XLSX.utils.json_to_sheet([sheet]);
+    //   XLSX.utils.book_append_sheet(workbook, worksheet, `${bills[i]}`);
+    // }
+    // return workbook;
     const workbook = XLSX.utils.book_new();
+    let allRows = [],
+      allSum = 0;
     for (let i = 0; i < payments.length; i++) {
-      let sheet = {};
-        for (let j = 0; j < payments[i].length; j++) {
-          sheet[`${bills[i]} tháng ${j + 1}`] = payments[i][j];
-        }
-      console.log(sheet);
-      const worksheet = XLSX.utils.json_to_sheet([sheet]);
-      XLSX.utils.book_append_sheet(workbook, worksheet, `${bills[i]}`);
+      let bill = {},
+        sum = 0;
+      bill[""] = bills[i];
+      for (let j = 0; j < payments[i].length; j++) {
+        bill[`Tháng ${j + 1}`] = payments[i][j];
+        sum += payments[i][j];
+      }
+      bill["Tổng"] = sum;
+      allSum += sum;
+      allRows = [...allRows, bill];
     }
+
+    let monthSum = {};
+    monthSum[""] = "Tổng";
+    for (let j = 0; j < 12; j++) {
+      let sum = 0;
+      for (let i = 0; i < payments.length; i++) {
+        sum += payments[i][j];
+      }
+      monthSum[`Tháng ${j + 1}`] = sum;
+    }
+    monthSum["Tổng"] = allSum;
+    allRows = [...allRows, monthSum];
+
+    const worksheet = XLSX.utils.json_to_sheet(allRows);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     return workbook;
   };
 

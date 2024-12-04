@@ -260,10 +260,10 @@ export function ChartsExample5() {
       await writableStream.write(excelBlob);
       await writableStream.close();
 
-      toast.success("Tải xuống file thanh cong");
+      toast.success("Tải xuống file thành công");
     } catch (error) {
       console.log(error.message);
-      toast.error("Tải xuống file that bai");
+      toast.error("Tải xuống file thất bại");
     }
   };
 

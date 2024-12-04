@@ -368,7 +368,7 @@ export default function TableWithStripedRows() {
                 size="sm"
                 variant="outlined"
                 onClick={next}
-                disabled={active === 10}
+                disabled={active === totalPages}
                 className="flex gap-1 items-center border-gray-300"
               >
                 Sau

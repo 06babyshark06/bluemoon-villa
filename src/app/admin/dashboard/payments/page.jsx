@@ -53,7 +53,7 @@ function cleanJSON(data) {
     const cleanedItem = {};
     cleanedItem["Khoản thu"] = item.bill.billName;
     cleanedItem["Số tiền"] = item.bill.money;
-    cleanedItem["Ngày thanh toán"]=new Date(item.payAt).toLocaleString();
+    cleanedItem["Ngày thanh toán"] = new Date(item.payAt).toLocaleString();
     cleanedItem["Chủ hộ"] = item.home.members[0].name;
     cleanedItem["Số nhà"] = item.home.houseNumber;
     return cleanedItem;
@@ -92,7 +92,6 @@ export default function TransactionsTable() {
   const currentPayments = searchedPayments.slice(startIndex, endIndex);
   const downloadPayments = async () => {
     const cleanedData = cleanJSON(searchedPayments);
-    console.log(cleanedData);
     try {
       // Tạo workbook và worksheet
       const worksheet = XLSX.utils.json_to_sheet(cleanedData);
@@ -166,7 +165,10 @@ export default function TransactionsTable() {
               <Input
                 label="Tìm kiếm"
                 icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setActive(1);
+                }}
               />
             </div>
             <Button
@@ -367,7 +369,7 @@ export default function TransactionsTable() {
                 size="sm"
                 variant="outlined"
                 onClick={next}
-                disabled={active === 10}
+                disabled={active === totalPages}
                 className="flex gap-1 items-center border-gray-300"
               >
                 Sau

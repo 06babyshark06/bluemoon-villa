@@ -343,13 +343,28 @@ export default function TransactionsTable() {
                 <Button variant="outlined">{paymentsPerPage} hóa đơn</Button>
               </MenuHandler>
               <MenuList>
-                <MenuItem onClick={() => setPaymentsPerPage(5)}>
+                <MenuItem
+                  onClick={() => {
+                    setPaymentsPerPage(5);
+                    setActive(1);
+                  }}
+                >
                   5 hóa đơn
                 </MenuItem>
-                <MenuItem onClick={() => setPaymentsPerPage(10)}>
+                <MenuItem
+                  onClick={() => {
+                    setPaymentsPerPage(10);
+                    setActive(1);
+                  }}
+                >
                   10 hóa đơn
                 </MenuItem>
-                <MenuItem onClick={() => setPaymentsPerPage(20)}>
+                <MenuItem
+                  onClick={() => {
+                    setPaymentsPerPage(20);
+                    setActive(1);
+                  }}
+                >
                   20 hóa đơn
                 </MenuItem>
               </MenuList>

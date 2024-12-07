@@ -351,13 +351,26 @@ export default function TableWithStripedRows() {
                 <Button variant="outlined">{membersPerPage} người</Button>
               </MenuHandler>
               <MenuList>
-                <MenuItem onClick={() => setMembersPerPage(5)}>
+                <MenuItem
+                  onClick={() => {
+                    setMembersPerPage(5);
+                    setActive(1);
+                  }}
+                >
                   5 người
                 </MenuItem>
-                <MenuItem onClick={() => setMembersPerPage(10)}>
+                <MenuItem
+                  onClick={() => {
+                    setMembersPerPage(10), setActive(1);
+                  }}
+                >
                   10 người
                 </MenuItem>
-                <MenuItem onClick={() => setMembersPerPage(20)}>
+                <MenuItem
+                  onClick={() => {
+                    setMembersPerPage(20), setActive(1);
+                  }}
+                >
                   20 người
                 </MenuItem>
               </MenuList>

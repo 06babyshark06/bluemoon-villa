@@ -342,13 +342,28 @@ export default function TableWithStripedRows() {
                 <Button variant="outlined">{homesPerPage} hộ</Button>
               </MenuHandler>
               <MenuList>
-                <MenuItem onClick={() => setHomesPerPage(5)}>
+                <MenuItem
+                  onClick={() => {
+                    setHomesPerPage(5);
+                    setActive(1);
+                  }}
+                >
                   5 hộ
                 </MenuItem>
-                <MenuItem onClick={() => setHomesPerPage(10)}>
+                <MenuItem
+                  onClick={() => {
+                    setHomesPerPage(10);
+                    setActive(1);
+                  }}
+                >
                   10 hộ
                 </MenuItem>
-                <MenuItem onClick={() => setHomesPerPage(20)}>
+                <MenuItem
+                  onClick={() => {
+                    setHomesPerPage(20);
+                    setActive(1);
+                  }}
+                >
                   20 hộ
                 </MenuItem>
               </MenuList>

@@ -22,7 +22,7 @@ const Contact = () => {
       <Card className="w-[30rem] p-9 bg-blue-gray-100 ">
         <CardHeader color="" className="flex justify-center items-center mt-1">
           <Typography variant="h1" color="blue" className="my-3">
-            Người quản lý dự án
+            Người quản lý
           </Typography>
         </CardHeader>
         <CardBody>

@@ -23,11 +23,9 @@ const calculateDistance = (position1, position2) => {
 };
 const calculateCost = (path, positions) => {
   let totalCost = 0;
-  // Tính tổng chi phí từ các thành phố trong chu trình
   for (let i = 0; i < path.length - 1; i++) {
     totalCost += calculateDistance(positions[path[i]], positions[path[i + 1]]);
   }
-  // Thêm chi phí từ thành phố cuối quay lại thành phố đầu
   totalCost += calculateDistance(
     positions[path[path.length - 1]],
     positions[path[0]]
@@ -48,18 +46,17 @@ const generatePermutations = (array) => {
 };
 const travelingSalesmanBruteForce = (positions) => {
   const n = positions.length;
-  const cityIndices = Array.from({ length: n }, (_, i) => i); // Các chỉ số của các thành phố
-  const permutations = generatePermutations(cityIndices.slice(1)); // Liệt kê tất cả hoán vị các thành phố trừ thành phố xuất phát (0)
+  const cityIndices = Array.from({ length: n }, (_, i) => i);
+  const permutations = generatePermutations(cityIndices.slice(1));
 
   let minCost = Infinity;
   let bestPath = [];
 
-  // Duyệt qua tất cả các hoán vị để tính tổng chi phí
   for (let path of permutations) {
-    const cost = calculateCost([0, ...path], positions); // Thêm thành phố xuất phát (0) vào đầu chuỗi
+    const cost = calculateCost([0, ...path], positions); 
     if (cost < minCost) {
       minCost = cost;
-      bestPath = [0, ...path]; // Lưu lại chu trình tốt nhất
+      bestPath = [0, ...path]; 
     }
   }
 
@@ -75,7 +72,7 @@ const Map = () => {
   const [zoom] = useState(16);
 
   useEffect(() => {
-    if (map.current) return; // stops map from intializing more than once
+    if (map.current) return; 
 
     map.current = new L.Map(mapContainer.current, {
       center: L.latLng(center.lat, center.lng),
@@ -97,7 +94,6 @@ const Map = () => {
     if (markers.length < 2) return;
     const { minCost, bestPath } = travelingSalesmanBruteForce(markers);
     console.log(bestPath);
-    // Placeholder TSP: just draw a path connecting markers in order
     const newRoute = bestPath.map((position) =>
       L.latLng(markers[position].lat, markers[position].lng)
     );

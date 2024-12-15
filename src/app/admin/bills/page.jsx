@@ -565,7 +565,7 @@ function Billing3() {
             />
             <Input
               type="number"
-              label="Giá tiền dịch vụ chung cư 1 tháng"
+              label="Giá tiền dịch vụ chung cư 1 tháng trên 1(m2)"
               disabled={!checkedService}
             />
             <Switch
@@ -576,7 +576,7 @@ function Billing3() {
             />
             <Input
               type="number"
-              label="Giá tiền quản lý chung cư 1 tháng"
+              label="Giá tiền quản lý chung cư 1 tháng trên 1(m2)"
               disabled={!checkedManage}
             />
             <Switch
@@ -587,12 +587,12 @@ function Billing3() {
             />
             <Input
               type="number"
-              label="Giá tiền gửi ô tô 1 tháng"
+              label="Giá tiền gửi 1 ô tô 1 tháng"
               disabled={!checkedParking}
             />
             <Input
               type="number"
-              label="Giá tiền gửi xe máy 1 tháng"
+              label="Giá tiền gửi 1 xe máy 1 tháng"
               disabled={!checkedParking}
             />
             <Typography variant="small" color="red" className="!font-normal">

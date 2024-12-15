@@ -41,6 +41,7 @@ export function NavbarWithSimpleLinks() {
   const { data: session, status: sessionStatus } = useSession();
   const handleSignout = () => {
     signOut();
+    route.push("/")
   };
 
   React.useEffect(() => {
@@ -53,10 +54,10 @@ export function NavbarWithSimpleLinks() {
   return (
     <div className=" min-w-full fixed z-20">
       <Navbar className="bg-white" fullWidth>
-        <div className="container mx-auto flex items-center justify-between text-blue-gray-900">
+        <div className=" mx-auto flex items-center justify-between text-blue-gray-900">
           <div className="flex justify-center items-center gap-1">
             <Link href="/">
-              <GiMoonOrbit className="w-10 h-10 flex justify-center items-center text-blue-700" />
+              <GiMoonOrbit className="w-10 h-10 ml-5 flex justify-center items-center text-blue-700" />
             </Link>
             <Typography
               as="a"
@@ -67,17 +68,17 @@ export function NavbarWithSimpleLinks() {
               Bluemoon Villa
             </Typography>
           </div>
-          <div className="hidden lg:block">
+          <div className=" hidden lg:block">
             <NavList />
           </div>
           {!session ? (
             <Link href="/login">
-              <Button color="gray" className="hidden lg:inline-block">
+              <Button color="gray" className="mr-5 hidden lg:inline-block">
                 Đăng nhập
               </Button>
             </Link>
           ) : (
-            <div className="flex justify-center items-center gap-4">
+            <div className="mr-5 flex justify-center items-center gap-4">
               <Typography as="h1" color="blue" className="ml-1 hidden lg:block">
                 {session?.user.email}
               </Typography>

@@ -20,7 +20,7 @@ import {
   ListItem,
 } from "@material-tailwind/react";
 
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 
 function Account1() {
@@ -129,8 +129,8 @@ function Account1() {
     });
     const data = await response.json();
     if (response.ok) {
-      toast.success("Xóa tài khoản thành công");
       setOpen(false);
+      toast.success("Xóa tài khoản thành công");
       signOut();
     } else {
       toast.error("Có lỗi xảy ra khi xóa tài khoản");

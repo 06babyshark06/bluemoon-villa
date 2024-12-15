@@ -217,10 +217,10 @@ export default function TableWithStripedRows() {
           <div className="flex justify-between md:items-center gap-y-4 flex-col md:flex-row">
             <div>
               <Typography className="font-bold">
-                Danh sách thành viên
+                Danh sách nhân khẩu
               </Typography>
               <Typography variant="small" className="font-normal text-gray-600">
-                Xem toàn bộ thông tin thành viên
+                Xem toàn bộ thông tin nhân khẩu
               </Typography>
             </div>
             <div className="flex gap-2">

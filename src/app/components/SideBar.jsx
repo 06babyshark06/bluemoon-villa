@@ -19,6 +19,10 @@ import {
   RectangleGroupIcon,
   HomeIcon,
   ChatBubbleLeftEllipsisIcon,
+  ChartBarIcon,
+  UserIcon,
+  ArchiveBoxArrowDownIcon,
+  CurrencyDollarIcon,
 } from "@heroicons/react/24/solid";
 import {
   ChevronDownIcon,
@@ -27,6 +31,7 @@ import {
 import Image from "next/image";
 import { RiAdminFill, RiUserAddFill } from "react-icons/ri";
 import Link from "next/link";
+import { FcCurrencyExchange } from "react-icons/fc";
 
 function SidebarLight() {
   const [open, setOpen] = React.useState(0);
@@ -54,77 +59,30 @@ function SidebarLight() {
       </div>
       <hr className="my-2 border-gray-200" />
       <List>
-        <Accordion open={open === 1}>
-          <ListItem
-            selected={open === 1}
-            data-selected={open === 1}
-            onClick={() => handleOpen(1)}
-            className="p-3 select-none hover:bg-gray-100 focus:bg-gray-100 active:bg-gray-100 hover:text-gray-900 focus:text-gray-900 active:text-gray-900 data-[selected=true]:text-gray-900"
-          >
+        <Link href="/admin/profile">
+          <ListItem className={LIST_ITEM_STYLES}>
             <ListItemPrefix>
-              <RiAdminFill className="w-5 h-5" />
+              <UserIcon className="h-5 w-5" />
             </ListItemPrefix>
-            <Typography className="mr-auto font-normal text-inherit">
-              Admin
-            </Typography>
-            <ChevronDownIcon
-              strokeWidth={3}
-              className={`ml-auto h-4 w-4 text-gray-500 transition-transform ${
-                open === 1 ? "rotate-180" : ""
-              }`}
-            />
+            Thông tin
           </ListItem>
-          <AccordionBody className="py-1">
-            <List className="p-0">
-              <Link href="/admin/profile">
-                <ListItem className={`px-16 ${LIST_ITEM_STYLES}`}>
-                  Thông tin
-                </ListItem>
-              </Link>
-              <Link href="/admin/map">
-                <ListItem className={`px-16 ${LIST_ITEM_STYLES}`}>
-                  Map
-                </ListItem>
-              </Link>
-            </List>
-          </AccordionBody>
-        </Accordion>
-        <hr className="my-2 border-gray-200" />
-        <Accordion open={open === 2}>
-          <ListItem
-            selected={open === 2}
-            data-selected={open === 2}
-            onClick={() => handleOpen(2)}
-            className="px-3 py-[9px] select-none hover:bg-gray-100 focus:bg-gray-100 active:bg-gray-100 hover:text-gray-900 focus:text-gray-900 active:text-gray-900 data-[selected=true]:text-gray-900"
-          >
+        </Link>
+        <Link href="/admin/analytics">
+          <ListItem className={LIST_ITEM_STYLES}>
             <ListItemPrefix>
-              <RectangleGroupIcon className="h-5 w-5" />
+              <ChartBarIcon className="h-5 w-5" />
             </ListItemPrefix>
-            <Typography className="mr-auto font-normal text-inherit">
-              Bảng điều khiển
-            </Typography>
-            <ChevronDownIcon
-              strokeWidth={3}
-              className={`ml-auto h-4 w-4 text-gray-500 transition-transform ${
-                open === 2 ? "rotate-180" : ""
-              }`}
-            />
+            Thống kê
           </ListItem>
-          <AccordionBody className="py-1">
-            <List className="p-0">
-              <Link href="/admin/dashboard/analytics">
-                <ListItem className={`px-12 ${LIST_ITEM_STYLES}`}>
-                  Thống kê
-                </ListItem>
-              </Link>
-              <Link href="/admin/dashboard/payments">
-                <ListItem className={`px-12 ${LIST_ITEM_STYLES}`}>
-                  Thanh toán
-                </ListItem>
-              </Link>
-            </List>
-          </AccordionBody>
-        </Accordion>
+        </Link>
+        <Link href="/admin/payments">
+          <ListItem className={LIST_ITEM_STYLES}>
+            <ListItemPrefix>
+              <CurrencyDollarIcon className="h-5 w-5" />
+            </ListItemPrefix>
+            Thanh toán
+          </ListItem>
+        </Link>
         <Link href="/admin/bills">
           <ListItem className={LIST_ITEM_STYLES}>
             <ListItemPrefix>
@@ -133,15 +91,12 @@ function SidebarLight() {
             Các khoản thu
           </ListItem>
         </Link>
-        <Link
-          href="/admin/homes
-        "
-        >
+        <Link href="/admin/homes">
           <ListItem className={LIST_ITEM_STYLES}>
             <ListItemPrefix>
               <HomeIcon className="h-5 w-5" />
             </ListItemPrefix>
-            Danh sách hộ gia đình
+            Hộ khẩu
           </ListItem>
         </Link>
         <Link href="/admin/members">
@@ -149,7 +104,7 @@ function SidebarLight() {
             <ListItemPrefix>
               <UserGroupIcon className="h-5 w-5" />
             </ListItemPrefix>
-            Danh sách thành viên
+            Nhân khẩu
           </ListItem>
         </Link>
       </List>

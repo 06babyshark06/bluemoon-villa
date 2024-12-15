@@ -64,7 +64,9 @@ function AccordionCustomIcon() {
                 <AccordionHeader onClick={() => handleOpenInner(question.id)}>
                   {question.question}
                 </AccordionHeader>
-                <AccordionBody className="pl-4">{question.answer}</AccordionBody>
+                <AccordionBody className="pl-4 text-xl text-black leading-loose">
+                  <p style={{ whiteSpace: "pre-wrap" }}>{question.answer}</p>
+                </AccordionBody>
               </Accordion>
             </AccordionBody>
           ))}
